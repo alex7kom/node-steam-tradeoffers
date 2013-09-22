@@ -1,0 +1,9 @@
+{
+  "name": "steam-tradeoffers",
+  "version": "0.0.1",
+  "dependencies": {
+    "request": "*",
+    "cheerio": "*",
+    "long": "*"
+  }
+}
