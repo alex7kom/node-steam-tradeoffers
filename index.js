@@ -262,22 +262,6 @@ function toAccountId(steamId) {
   return Long.fromString(steamId).toInt().toString();
 }
 
-function parseItems(elems, $) {
-  return elems.map(function(tradeIndex, tradeItem) {
-    var info = $(tradeItem).attr('data-economy-item').split('/');
-    if (info.length == 4) {
-      return {
-        appid: info[0],
-        contextid: info[1],
-        itemid: info[2],
-        ownerid: info[3]
-      };
-    } else {
-      return;
-    }
-  });
-}
-
 SteamTradeOffers.prototype.makeOffer = function(partner, message, itemsFromMe, itemsFromThem, callback) {
   var self = this;
 
