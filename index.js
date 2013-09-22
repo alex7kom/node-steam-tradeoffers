@@ -68,7 +68,7 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'loading my inventory: ' + (error || response.statusCode));
-      this.loadInventory(appid, contextid, callback);
+      this.loadMyInventory(appid, contextid, callback);
     } else if (typeof body != 'object') {
       // no session
       if(typeof callback == 'function'){
