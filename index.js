@@ -232,7 +232,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
     }
   } else {
     this._request.post({
-      uri: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/accept',
+      uri: 'https://steamcommunity.com/tradeoffer/' + tradeofferid + '/accept',
       headers: {
         referer: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/'
       },
@@ -243,7 +243,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
     }, function(error, response, body) {
       if (error || response.statusCode != 200) {
         if(typeof callback == 'function'){
-          callback(error);
+          callback(error || new Error(response.statusCode));
         }
       } else {
         if(typeof callback == 'function'){
@@ -273,7 +273,7 @@ SteamTradeOffers.prototype.makeOffer = function(partner, message, itemsFromMe, i
   };
 
   this._request.post({
-    uri: 'http://steamcommunity.com/tradeoffer/new/send',
+    uri: 'https://steamcommunity.com/tradeoffer/new/send',
     headers: {
       referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
     },
