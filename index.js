@@ -31,7 +31,7 @@ function getAPIKey(self, callback) {
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
-      self.getAPIKey();
+      getAPIKey(self, callback);
     } else {
       var $ = cheerio.load(body);
       if($('#bodyContents_ex h2').html() == 'Your Steam Web API Key'){
@@ -48,7 +48,7 @@ function getAPIKey(self, callback) {
             agreeToTerms: 1
           }
         }, function(error, response, body) {
-            self.getAPIKey();
+            getAPIKey(self, callback);
         }.bind(self));
       }
     }
