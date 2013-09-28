@@ -36,13 +36,9 @@ steam.on('tradeOffers', function(number) {
         body.response.trade_offers_received.forEach(function(offer) {
           if (offer.trade_offer_state == 2){
             if(offer.steamid_other == admin) {
-              offers.acceptOffer({
-                tradeofferid: offer.tradeofferid
-              });
+              offers.acceptOffer(offer.tradeofferid);
             } else {
-              offers.declineOffer({
-                tradeofferid: offer.tradeofferid
-              });
+              offers.declineOffer(offer.tradeofferid);
             }
           }
         });
