@@ -15,13 +15,13 @@ Instantiate a SteamTradeOffers object...
 
 ```js
 var SteamTradeOffers = require('steam-tradeoffers');
-var Offers = new SteamTradeOffers();
+var offers = new SteamTradeOffers();
 ```
 
 ...then setup session:
 
 ```js
-Offers.setup(sessionID, cookies);
+offers.setup(sessionID, cookies);
 ```
 
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
@@ -37,13 +37,13 @@ All callbacks will be supplied with error as the first argument or null if no er
 
 Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
 
-## loadMyInventory(partnerSteamId, appid, contextid, callback)
+## loadPartnerInventory(partnerSteamId, appid, contextid, callback)
 
 Loads your partner inventory for the given app and context.
 
 ## makeOffer(partnerSteamId, message, itemsFromMe, itemsFromThem[, callback])
 
-Makes a trade offer to the partner. `itemsFromMe` are the items you will lose in the trade. `itemsFromThem` are the items you will receive in the trade. `itemsFromMe` and `itemsFromThem` both are arrays of item objects, that look like this:
+Makes a trade offer to the partner. `itemsFromMe` are the items you will lose in the trade. `itemsFromThem` are the items you will receive in the trade. `itemsFromMe` and `itemsFromThem` both are arrays of item objects that look like this:
 
 ```json
 {
@@ -59,7 +59,7 @@ If success the second param to `callback` will be an object with `tradeofferid` 
 ## getOffers(options, callback)
 ## getOffer(options, callback)
 
-The first method loads a list of trade offers, and the second loads just a single offer. `options` is an object of input params listed on the page [Steam Web API/IEconService](https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService). The second argument to `callback` will be a returned object that also documented on the page by the link above. The only thing to note is that to every `CEcon_TradeOffer` object added a property with a SteamID of the trade partner.
+The first method loads a list of trade offers, and the second loads just a single offer. `options` is an object of input params listed on the page [Steam Web API/IEconService](https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService). The second argument to `callback` will be an object that Steam Web API returns. The only thing to note is that the wrapper adds a property `steamid_other` with the SteamID of the trade partner to each `CEcon_TradeOffer` object in received trades.
 
 ## declineOffer(tradeofferid[, callback])
 ## acceptOffer(tradeofferid[, callback])
