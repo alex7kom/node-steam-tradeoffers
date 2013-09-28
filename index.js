@@ -217,28 +217,28 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
   });
 };
 
-SteamTradeOffers.prototype.declineOffer = function(options, callback) {
-  doAPICall(this, {method: 'DeclineTradeOffer/v1', params: options, post: true, callback: callback});
+SteamTradeOffers.prototype.declineOffer = function(tradeofferid, callback) {
+  doAPICall(this, {method: 'DeclineTradeOffer/v1', params: {tradeofferid: tradeofferid}, post: true, callback: callback});
 };
 
-SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
-  doAPICall(this, {method: 'CancelTradeOffer/v1', params: options, post: true, callback: callback});
+SteamTradeOffers.prototype.cancelOffer = function(tradeofferid, callback) {
+  doAPICall(this, {method: 'CancelTradeOffer/v1', params: {tradeofferid: tradeofferid}, post: true, callback: callback});
 };
 
-SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
-  if (typeof options == 'undefined') {
+SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
+  if (typeof tradeofferid == 'undefined') {
     if(typeof callback == 'function'){
       callback(new Error('No options'));
     }
   } else {
     this._request.post({
-      uri: 'http://steamcommunity.com/tradeoffer/' + options.tradeofferid + '/accept',
+      uri: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/accept',
       headers: {
-        referer: 'http://steamcommunity.com/tradeoffer/' + options.tradeofferid + '/'
+        referer: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/'
       },
       form: {
         sessionid: this.sessionID,
-        tradeofferid: options.tradeofferid
+        tradeofferid: tradeofferid
       }
     }, function(error, response, body) {
       if (error || response.statusCode != 200) {
@@ -285,13 +285,13 @@ SteamTradeOffers.prototype.makeOffer = function(partner, message, itemsFromMe, i
     }
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      self.emit('debug', 'loading offers: ' + (error || response.statusCode));
+      self.emit('debug', 'making an offer: ' + (error || response.statusCode));
       if(typeof callback == 'function'){
-        callback(error);
+        callback(error || new Error(response.statusCode));
       }
     } else {
       if(typeof callback == 'function'){
-        callback();
+        callback(null, JSON.parse(body));
       }
     }
   });
