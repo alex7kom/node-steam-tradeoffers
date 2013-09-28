@@ -35,11 +35,11 @@ All callbacks will be supplied with error as the first argument or null if no er
 
 ## loadMyInventory(appid, contextid, callback)
 
-Loads your library for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
+Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
 
 ## loadMyInventory(partnerSteamId, appid, contextid, callback)
 
-Loads your partner library for the given app and context.
+Loads your partner inventory for the given app and context.
 
 ## makeOffer(partnerSteamId, message, itemsFromMe, itemsFromThem[, callback])
 
