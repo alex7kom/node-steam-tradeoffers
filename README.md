@@ -46,7 +46,7 @@ Loads your partner inventory for the given app and context.
 Makes a trade offer to the partner. `options` is an object of the following input params:
 
 * `partnerAccountId` or `partnerSteamId`, you need only one of those.
-* `accessToken` is a token from the public Trade URL of the partner.
+* `accessToken` (optional) is a token from the public Trade URL of the partner.
 * `itemsFromMe` are the items you will lose in the trade.
 * `itemsFromThem` are the items you will receive in the trade.
 
