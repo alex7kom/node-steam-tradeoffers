@@ -262,27 +262,38 @@ function toAccountId(steamId) {
   return Long.fromString(steamId).toInt().toString();
 }
 
-SteamTradeOffers.prototype.makeOffer = function(partner, message, itemsFromMe, itemsFromThem, callback) {
+SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var self = this;
 
   var tradeoffer = {
     "newversion":true,
     "version":2,
-    "me":{"assets": itemsFromMe,"currency":[],"ready":false},
-    "them":{"assets": itemsFromThem,"currency":[],"ready":false}
+    "me":{"assets": options.itemsFromMe,"currency":[],"ready":false},
+    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false}
+  };
+
+  var formFields = {
+    sessionid: this.sessionID,
+    partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
+    tradeoffermessage: "",
+    json_tradeoffer: JSON.stringify(tradeoffer)
+  };
+
+  var query = {
+    partner: options.partnerAccountId || toAccountId(options.partnerSteamId)
+  };
+
+  if(typeof options.accessToken != 'undefined'){
+    formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
+    query.token = options.accessToken;
   };
 
   this._request.post({
     uri: 'https://steamcommunity.com/tradeoffer/new/send',
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
+      referer: 'http://steamcommunity.com/tradeoffer/new/?' + buildQuery(query)
     },
-    form: {
-      sessionid: this.sessionID,
-      partner: partner,
-      tradeoffermessage: message,
-      json_tradeoffer: JSON.stringify(tradeoffer)
-    }
+    form: formFields
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'making an offer: ' + (error || response.statusCode));

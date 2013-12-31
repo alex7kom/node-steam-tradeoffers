@@ -41,9 +41,16 @@ Loads your inventory for the given app and context. For example, use 440 and 2 f
 
 Loads your partner inventory for the given app and context.
 
-## makeOffer(partnerSteamId, message, itemsFromMe, itemsFromThem[, callback])
+## makeOffer(options[, callback])
 
-Makes a trade offer to the partner. `itemsFromMe` are the items you will lose in the trade. `itemsFromThem` are the items you will receive in the trade. `itemsFromMe` and `itemsFromThem` both are arrays of item objects that look like this:
+Makes a trade offer to the partner. `options` is an object of the following input params:
+
+* `partnerAccountId` or `partnerSteamId`, you need only one of those.
+* `accessToken` is a token from the public Trade URL of the partner.
+* `itemsFromMe` are the items you will lose in the trade.
+* `itemsFromThem` are the items you will receive in the trade.
+
+`itemsFromMe` and `itemsFromThem` both are arrays of item objects that look like this:
 
 ```json
 {
