@@ -2,7 +2,7 @@
   "name": "steam-tradeoffers",
   "version": "0.0.1",
   "dependencies": {
-    "request": "*",
+    "request": "2.27.0",
     "cheerio": "*",
     "long": "*"
   }
