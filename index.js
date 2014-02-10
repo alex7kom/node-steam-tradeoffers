@@ -66,8 +66,8 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
     uri: 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid,
     json: true
   }, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      self.emit('debug', 'loading my inventory: ' + (error || response.statusCode));
+    if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
+      self.emit('debug', 'loading my inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
       this.loadMyInventory(appid, contextid, callback);
     } else if (typeof body != 'object') {
       // no session
@@ -99,8 +99,8 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, conte
       contextid: contextid
     }
   }, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      self.emit('debug', 'loading partner inventory: ' + (error || response.statusCode));
+    if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
+      self.emit('debug', 'loading partner inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
       this.loadPartnerInventory(partner, appid, contextid, callback);
     } else if (typeof body != 'object') {
       // no session
