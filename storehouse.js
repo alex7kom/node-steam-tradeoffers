@@ -31,7 +31,7 @@ steam.on('webSessionID', function(sessionID) {
 
 steam.on('tradeOffers', function(number) {
   if (number > 0) {
-    offers.getOffers({get_received_offers: 1}, function(error, body) {
+    offers.getOffers({get_received_offers: 1, active_only: 1}, function(error, body) {
       if(body.response.trade_offers_received){
         body.response.trade_offers_received.forEach(function(offer) {
           if (offer.trade_offer_state == 2){
