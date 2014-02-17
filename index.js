@@ -74,6 +74,11 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
       if(typeof callback == 'function'){
        callback(new Error('No session'));
       }
+    } else if (body.success == false) {
+      // inventory not found
+      if(typeof callback == 'function'){
+       callback(new Error('Inventory not found'));
+      }
     } else {
       if(typeof callback == 'function'){
         callback(null, mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
