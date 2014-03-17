@@ -281,6 +281,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
     tradeoffermessage: "",
+    tradeofferid_countered: options.counteredTradeOffer,
     json_tradeoffer: JSON.stringify(tradeoffer)
   };
 
