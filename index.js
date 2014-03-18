@@ -269,12 +269,15 @@ function toAccountId(steamId) {
 
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var self = this;
+  var message = '';
+  if (options.message) { message==options.message } else { message='' }
 
   var tradeoffer = {
     "newversion":true,
     "version":2,
     "me":{"assets": options.itemsFromMe,"currency":[],"ready":false},
-    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false}
+    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false},
+    "message":message
   };
 
   var formFields = {
@@ -291,7 +294,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   if(typeof options.accessToken != 'undefined'){
     formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
     query.token = options.accessToken;
-  };
+  }
 
   this._request.post({
     uri: 'https://steamcommunity.com/tradeoffer/new/send',
