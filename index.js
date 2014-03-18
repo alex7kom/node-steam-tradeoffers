@@ -292,11 +292,19 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
     query.token = options.accessToken;
   };
+  
+  if (typeof options.counteredTradeOffer != 'undefined') {
+    formFields.tradeofferid_countered: options.counteredTradeOffer;
+    var referer = 'http://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
+  }
+  else {
+    var referer = 'http://steamcommunity.com/tradeoffer/new/?' + buildQuery(query);
+  }
 
   this._request.post({
     uri: 'https://steamcommunity.com/tradeoffer/new/send',
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?' + buildQuery(query)
+      referer: referer
     },
     form: formFields
   }, function(error, response, body) {
