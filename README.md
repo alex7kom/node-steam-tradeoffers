@@ -49,6 +49,7 @@ Makes a trade offer to the partner. `options` is an object of the following inpu
 * `accessToken` (optional) is a token from the public Trade URL of the partner.
 * `itemsFromMe` are the items you will lose in the trade.
 * `itemsFromThem` are the items you will receive in the trade.
+* `message` (optional) is a message included in the trade offer.
 
 `itemsFromMe` and `itemsFromThem` both are arrays of item objects that look like this:
 

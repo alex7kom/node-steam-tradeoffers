@@ -269,6 +269,8 @@ function toAccountId(steamId) {
 
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var self = this;
+  var message = '';
+  if (options.message) { message==options.message } else { message='' }
 
   var tradeoffer = {
     "newversion":true,
@@ -280,7 +282,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var formFields = {
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
-    tradeoffermessage: "",
+    tradeoffermessage: message,
     json_tradeoffer: JSON.stringify(tradeoffer)
   };
 
@@ -291,7 +293,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   if(typeof options.accessToken != 'undefined'){
     formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
     query.token = options.accessToken;
-  };
+  }
 
   this._request.post({
     uri: 'https://steamcommunity.com/tradeoffer/new/send',
