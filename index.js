@@ -276,14 +276,13 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     "newversion":true,
     "version":2,
     "me":{"assets": options.itemsFromMe,"currency":[],"ready":false},
-    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false},
-    "message":message
+    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false}
   };
 
   var formFields = {
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
-    tradeoffermessage: options.message,
+    tradeoffermessage: message,
     json_tradeoffer: JSON.stringify(tradeoffer)
   };
 
