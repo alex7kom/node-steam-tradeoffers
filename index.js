@@ -91,19 +91,18 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
 SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, contextid, callback) {
   var self = this;
 
-  this._request.post({
-    uri: 'http://steamcommunity.com/tradeoffer/new/partnerinventory/',
-    json: true,
-    headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
-    },
-    form: {
+   this._request.get({
+    uri: 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?'+require('querystring').stringify({
       sessionid: this.sessionID,
       partner: partner,
       appid: appid,
       contextid: contextid
+    }),
+    json: true,
+    headers: {
+      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
     }
-  }, function(error, response, body) {
+    }, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
       self.emit('debug', 'loading partner inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
       this.loadPartnerInventory(partner, appid, contextid, callback);
