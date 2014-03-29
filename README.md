@@ -50,6 +50,7 @@ Makes a trade offer to the partner. `options` is an object of the following inpu
 * `itemsFromMe` are the items you will lose in the trade.
 * `itemsFromThem` are the items you will receive in the trade.
 * `counteredTradeOffer` (optional) is the ID to a trade offer you are countering.
+* `message` (optional) is a message to include in the offer.
 
 `itemsFromMe` and `itemsFromThem` both are arrays of item objects that look like this:
 

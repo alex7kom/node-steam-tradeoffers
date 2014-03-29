@@ -280,7 +280,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var formFields = {
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
-    tradeoffermessage: "",
+    tradeoffermessage: options.message || "",
     json_tradeoffer: JSON.stringify(tradeoffer)
   };
 
