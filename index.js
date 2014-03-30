@@ -3,6 +3,7 @@ module.exports = SteamTradeOffers;
 var request = require('request');
 var cheerio = require('cheerio');
 var Long = require('long');
+var querystring = require('querystring');
 
 require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
 
@@ -136,7 +137,7 @@ function mergeWithDescriptions(items, descriptions, contextid) {
 
 function doAPICall(self, options) {
   var request_params = {
-    uri: 'http://api.steampowered.com/IEconService/' + options.method + '/?key=' + self.APIKey + ((options.post) ? '' : '&' + buildQuery(options.params)),
+    uri: 'http://api.steampowered.com/IEconService/' + options.method + '/?key=' + self.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
     json: true,
     method: options.post ? 'POST' : 'GET'
   };
@@ -161,16 +162,6 @@ function doAPICall(self, options) {
       }
     }
   });
-}
-
-function buildQuery(params) {
-  var query = [];
-  for(var x in params){
-    if (params.hasOwnProperty(x)) {
-      query.push(encodeURI(x) + '=' + encodeURI(params[x]));
-    }
-  }
-  return query.join('&');
 }
 
 SteamTradeOffers.prototype.getOffers = function(options, callback) {
@@ -298,7 +289,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     var referer = 'http://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
   }
   else {
-    var referer = 'http://steamcommunity.com/tradeoffer/new/?' + buildQuery(query);
+    var referer = 'http://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
   }
 
   this._request.post({
