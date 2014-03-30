@@ -60,16 +60,17 @@ function setCookie(self, cookie) {
   self._j.add(request.cookie(cookie));
 }
 
-SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback) {
-  var self = this;
+SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, contextid, start, callback) {
+  options.uri = uri;
+  
+  if (start) {
+    options.uri = options.uri + '&' + querystring.stringify({ 'start': start });
+  }
 
-  this._request.get({
-    uri: 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid,
-    json: true
-  }, function(error, response, body) {
+  this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
-      self.emit('debug', 'loading my inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
-      this.loadMyInventory(appid, contextid, callback);
+      this.emit('debug', 'loading my inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
+      this._loadInventory(inventory, uri, options, contextid, start, callback);
     } else if (typeof body != 'object') {
       // no session
       if(typeof callback == 'function'){
@@ -81,45 +82,45 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
        callback(new Error('Inventory not found'));
       }
     } else {
-      if(typeof callback == 'function'){
-        callback(null, mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
-        .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
+      inventory = inventory.concat(mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
+              .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
+      if (body.more) {
+        this._loadInventory(inventory, uri, options, contextid, body.more_start, callback);
+      } else {
+        if(typeof callback == 'function'){
+          callback(null, inventory);
+        }
       }
     }
   }.bind(this));
 };
 
+SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback) {
+  var self = this;
+
+  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1';
+
+  this._loadInventory([], uri, { json: true }, contextid, null, callback);
+};
+
 SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, contextid, callback) {
   var self = this;
 
-  this._request.post({
-    uri: 'http://steamcommunity.com/tradeoffer/new/partnerinventory/',
+  var form = {
+    sessionid: this.sessionID,
+    partner: partner,
+    appid: appid,
+    contextid: contextid
+  };
+
+  var uri = 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?' + querystring.stringify(form);
+
+  this._loadInventory([], uri, {
     json: true,
     headers: {
       referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
-    },
-    form: {
-      sessionid: this.sessionID,
-      partner: partner,
-      appid: appid,
-      contextid: contextid
     }
-  }, function(error, response, body) {
-    if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
-      self.emit('debug', 'loading partner inventory: ' + (error || response.statusCode != 200 ? response.statusCode : '{}'));
-      this.loadPartnerInventory(partner, appid, contextid, callback);
-    } else if (typeof body != 'object') {
-      // no session
-      if(typeof callback == 'function'){
-       callback(new Error('No session'));
-      }
-    } else {
-      if(typeof callback == 'function'){
-        callback(null, mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
-        .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
-      }
-    }
-  }.bind(this));
+  }, contextid, null, callback);
 };
 
 function mergeWithDescriptions(items, descriptions, contextid) {
