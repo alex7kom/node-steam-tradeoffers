@@ -29,6 +29,8 @@ offers.setup(sessionID, cookies);
 
 This setup will automatically register and retrieve Steam API key for you.
 
+The `storehouse.js` file contains an example of library usage. You'll need to install [node-steam](https://github.com/seishun/node-steam) in order to run it.
+
 # Methods
 
 All callbacks will be supplied with error as the first argument or null if no errors occured.
@@ -74,4 +76,41 @@ The first method loads a list of trade offers, and the second loads just a singl
 ## acceptOffer(tradeofferid[, callback])
 ## cancelOffer(tradeofferid[, callback])
 
-`declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent. The second argument to `callback` will be
+`declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent. The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
+
+# How to contribute
+
+I appreciate your time and efforts you put in your pull requests, but please follow next simple rules so your efforts wouldn't be in vain.
+
+  1. Please consider creating an issue ticket (bug report or feature request) before doing any code. Clearly state your issue or changes and I'll do my best to implement a new feature (if it fits the library) or fix the library.
+
+  2. If you did some research and/or reverse engineering, that is great! However, please do not put the results in the code right away, create an issue.
+
+  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase` into one commit.
+
+I reserve the right to close any pull request and/or rewrite your feature or fix myself.
+
+Thank you.
+
+# License
+
+The MIT License (MIT)
+
+Copyright (c) 2013-2014 Alexey Komarov <alex7kom@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
