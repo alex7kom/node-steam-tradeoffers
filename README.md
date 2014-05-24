@@ -35,6 +35,11 @@ The `storehouse.js` file contains an example of library usage. You'll need to in
 
 All callbacks will be supplied with error as the first argument or null if no errors occured.
 
+## setup(sessionID, cookies[, callback])
+
+As noted above, this method is used to setup a web session. It also tries to retrieve Web API key. If you want to operate with trade offers right after startup, do it in callback of this method.
+If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
+
 ## loadMyInventory(appid, contextid, callback)
 
 Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
