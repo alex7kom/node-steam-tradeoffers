@@ -35,7 +35,16 @@ function getAPIKey(self, callback) {
       getAPIKey(self, callback);
     } else {
       var $ = cheerio.load(body);
-      if($('#bodyContents_ex h2').html() == 'Your Steam Web API Key'){
+      if ($('#mainContents h2').html() == 'Access Denied') {
+        self.emit('debug', 'retrieving apikey: access denied (probably limited account)');
+        self.APIKey = '';
+        var error = new Error('Access Denied');
+        if(typeof callback == 'function'){
+          callback(error);
+        } else {
+          throw error;
+        }
+      } else if($('#bodyContents_ex h2').html() == 'Your Steam Web API Key'){
         var key = $('#bodyContents_ex p').html().split(' ')[1];
         self.APIKey = key;
         if(typeof callback == 'function'){
