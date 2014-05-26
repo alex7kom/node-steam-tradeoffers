@@ -309,14 +309,23 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     },
     form: formFields
   }, function(error, response, body) {
+    var result = {};
+    try {
+      result = JSON.parse(body) || {};
+    } catch(e) {
+      if(typeof callback == 'function'){
+        return callback(e);
+      }
+    }
+
     if (error || response.statusCode != 200) {
       self.emit('debug', 'making an offer: ' + (error || response.statusCode));
       if(typeof callback == 'function'){
-        callback(error || new Error(response.statusCode));
+        callback(error || new Error(result.strError || response.statusCode));
       }
     } else {
       if(typeof callback == 'function'){
-        callback(null, JSON.parse(body));
+        callback(null, result);
       }
     }
   });
