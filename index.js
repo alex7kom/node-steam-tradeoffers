@@ -14,10 +14,11 @@ function SteamTradeOffers() {
   this._request = request.defaults({jar:this._j});
 }
 
-SteamTradeOffers.prototype.setup = function(sessionID, webCookie, callback){
+SteamTradeOffers.prototype.setup = function(sessionID, webCookie, language, callback){
   var self = this;
 
   this.sessionID = sessionID;
+  this.language = language || "english";
 
   webCookie.forEach(function(name){
     setCookie(self, name);
@@ -107,7 +108,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback) {
   var self = this;
 
-  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1';
+  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1&l=' + self.language;
 
   this._loadInventory([], uri, { json: true }, contextid, null, callback);
 };
@@ -119,7 +120,8 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, conte
     sessionid: this.sessionID,
     partner: partner,
     appid: appid,
-    contextid: contextid
+    contextid: contextid,
+    l: this.language
   };
 
   var uri = 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?' + querystring.stringify(form);
