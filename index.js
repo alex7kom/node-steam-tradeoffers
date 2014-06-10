@@ -133,6 +133,9 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, conte
 };
 
 function mergeWithDescriptions(items, descriptions, contextid) {
+  if(!items) {
+    return [];
+  }
   return Object.keys(items).map(function(id) {
     var item = items[id];
     var description = descriptions[item.classid + '_' + (item.instanceid || '0')];
