@@ -90,6 +90,11 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
       if(typeof callback == 'function'){
        callback(new Error('Inventory not found'));
       }
+    } else if (Object.prototype.toString.apply(body) == '[object Array]') {
+      //private inventory
+      if(typeof callback == 'function'){
+        callback(new Error('Inventory is private'));
+      }
     } else {
       inventory = inventory.concat(mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
               .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
