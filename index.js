@@ -48,7 +48,7 @@ function getAPIKey(self, callback) {
         var key = $('#bodyContents_ex p').html().split(' ')[1];
         self.APIKey = key;
         if(typeof callback == 'function'){
-         callback();
+          callback();
         }
       } else {
         self._request.post({
@@ -58,7 +58,7 @@ function getAPIKey(self, callback) {
             agreeToTerms: 1
           }
         }, function(error, response, body) {
-            getAPIKey(self, callback);
+          getAPIKey(self, callback);
         }.bind(self));
       }
     }
@@ -83,12 +83,12 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
     } else if (typeof body != 'object') {
       // no session
       if(typeof callback == 'function'){
-       callback(new Error('No session'));
+        callback(new Error('No session'));
       }
     } else if (body.success == false) {
       // inventory not found
       if(typeof callback == 'function'){
-       callback(new Error('Inventory not found'));
+        callback(new Error('Inventory not found'));
       }
     } else if (Object.prototype.toString.apply(body) == '[object Array]') {
       //private inventory
@@ -97,7 +97,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
       }
     } else {
       inventory = inventory.concat(mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
-              .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
+        .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
       if (body.more) {
         this._loadInventory(inventory, uri, options, contextid, body.more_start, callback);
       } else {
@@ -142,7 +142,7 @@ function mergeWithDescriptions(items, descriptions, contextid) {
     var item = items[id];
     var description = descriptions[item.classid + '_' + (item.instanceid || '0')];
     for (var key in description) {
-        item[key] = description[key];
+      item[key] = description[key];
     }
     // add contextid because Steam is retarded
     item.contextid = contextid;
