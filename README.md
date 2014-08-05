@@ -7,7 +7,7 @@ __Note__: By using this library you automatically agree to [Steam API Terms of U
 # Installation
 
 ```
-npm install git://github.com/Alex7Kom/node-steam-tradeoffers.git
+npm install steam-tradeoffers
 ```
 
 # Usage
