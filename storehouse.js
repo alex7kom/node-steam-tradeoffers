@@ -1,8 +1,17 @@
-var username = '';
-var password = '';
-var steamGuard = require('fs').existsSync('sentry') ? require('fs').readFileSync('sentry')
-    : ''; // code received by email
 var admin = ''; // put your steamid here so the bot can accept your offers
+
+var logOnOptions = {
+  accountName: '',
+  password: ''
+};
+
+var authCode = ''; // code received by email
+
+if (require('fs').existsSync('sentry')) {
+  logOnOptions['shaSentryfile'] = require('fs').readFileSync('sentry');
+} else if (authCode != '') {
+  logOnOptions['authCode'] = authCode;
+}
 
 var Steam = require('steam');
 var SteamTradeOffers = require('./'); // change to 'steam-tradeoffers' if not running from the same directory
@@ -10,11 +19,7 @@ var SteamTradeOffers = require('./'); // change to 'steam-tradeoffers' if not ru
 var steam = new Steam.SteamClient();
 var offers = new SteamTradeOffers();
 
-steam.logOn({
-  accountName: username,
-  password: password,
-  shaSentryfile: steamGuard
-});
+steam.logOn(logOnOptions);
 
 steam.on('debug', console.log);
 
