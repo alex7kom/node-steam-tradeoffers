@@ -29,7 +29,17 @@ offers.setup(sessionID, cookies);
 
 This setup will automatically register and retrieve Steam API key for you.
 
-The `storehouse.js` file contains an example of library usage. You'll need to install [node-steam](https://github.com/seishun/node-steam) in order to run it.
+# Examples
+
+You'll need to install [node-steam](https://github.com/seishun/node-steam) in order to run the examples.
+
+The `storehouse.js` file contains an example of handling incoming trade offers. 
+
+The `offerbot.js` is an example of making a trade offer.
+
+On first launch both of the examples will 'crash' with error code `63`. Check your email for Steam Guard code and edit an example file to add it, the run it again.
+
+Please read the [FAQ](#faq) before creating an issue about examples.
 
 # Methods
 
@@ -82,6 +92,36 @@ The first method loads a list of trade offers, and the second loads just a singl
 ## cancelOffer(tradeofferid[, callback])
 
 `declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent. The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
+
+# FAQ
+
+Please read this list of common issues before creating an issue.
+
+### Q. I get `Access Denied` error when I start my bot.
+
+A. In most cases `Access Denied` error means that your account is limited. See [Steam Support article about limited accounts](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
+
+### Q. I can't login to my account.
+
+A. Double check that your account credentials and Steam Guard code are correct. This is never a problem of `steam-tradeoffers`. Examples here use [node-steam](https://github.com/seishun/node-steam) library to do Steam login.
+
+### Q. I can't make/accept/etc. trade offers.
+
+A. There are two major possible cases:
+
+* Your params are incorrect and/or items are not tradable.
+
+* Your account can't trade which is normal for all new logins. Wait for 1-2 weeks, do not remove `sentry` file. There are also some rare cases when even old enough logins can't trade. That means you are very unlucky. Remove `sentry` file and login again. Blame Steam.
+
+There are also some cases when Steam fails to send a trade offer due to its internal reasons, or returns errors even in cases of success. You know, blame Steam.
+
+### Q. What does `Web authentication 401, retrying` message mean?
+
+A. It means that `node-steam` at least once failed to get cookies from Steam. Most of the time you can safely ignore it.
+
+### Q. I don't see my question answered here. Can I email you or add you on Steam?
+
+A. No. Feel free to open an issue, but try search first.
 
 # How to contribute
 
