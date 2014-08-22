@@ -1,4 +1,4 @@
-var admin = ''; // put your steamid here so the bot can accept your offers
+var admin = ''; // put your steamid here so the bot can send you trade offers
 
 var logOnOptions = {
   accountName: '',
