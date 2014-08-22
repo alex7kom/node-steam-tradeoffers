@@ -14,7 +14,7 @@ if (require('fs').existsSync('sentry')) {
 }
 
 var Steam = require('steam');
-var SteamTradeOffers = require('./'); // change to 'steam-tradeoffers' if not running from the same directory
+var SteamTradeOffers = require('../'); // change to 'steam-tradeoffers' if not running from the examples subdirectory
 
 var steam = new Steam.SteamClient();
 var offers = new SteamTradeOffers();
