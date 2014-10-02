@@ -247,6 +247,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
       headers: {
         referer: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/'
       },
+      json: true,
       form: {
         sessionid: this.sessionID,
         tradeofferid: tradeofferid
@@ -254,7 +255,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
     }, function(error, response, body) {
       if (error || response.statusCode != 200) {
         if(typeof callback == 'function'){
-          callback(error || new Error(response.statusCode));
+          callback(error || body.strError || new Error(response.statusCode));
         }
       } else {
         if(typeof callback == 'function'){
