@@ -117,7 +117,7 @@ SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback
   this._loadInventory([], uri, { json: true }, contextid, null, callback);
 };
 
-SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, contextid, callback) {
+SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, contextid, callback, tradeofferid) {
   var self = this;
 
   var form = {
@@ -127,12 +127,12 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, conte
     contextid: contextid
   };
 
-  var uri = 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?' + querystring.stringify(form);
+  var uri = 'http://steamcommunity.com/tradeoffer/' + (typeof tradeofferid !== 'undefined' ? tradeofferid : 'new') + '/partnerinventory/?' + querystring.stringify(form);
 
   this._loadInventory([], uri, {
     json: true,
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
+      referer: 'http://steamcommunity.com/tradeoffer/' + (typeof tradeofferid !== 'undefined' ? tradeofferid : 'new') + '/'
     }
   }, contextid, null, callback);
 };
@@ -247,6 +247,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
       headers: {
         referer: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/'
       },
+      json: true,
       form: {
         sessionid: this.sessionID,
         tradeofferid: tradeofferid
@@ -254,7 +255,7 @@ SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
     }, function(error, response, body) {
       if (error || response.statusCode != 200) {
         if(typeof callback == 'function'){
-          callback(error || new Error(response.statusCode));
+          callback(error || body.strError || new Error(response.statusCode));
         }
       } else {
         if(typeof callback == 'function'){
