@@ -1,3 +1,7 @@
+var fs = require('fs');
+var Steam = require('steam');
+var SteamTradeOffers = require('../'); // change to 'steam-tradeoffers' if not running from the examples subdirectory
+
 var admin = ''; // put your steamid here so the bot can accept your offers
 
 var logOnOptions = {
@@ -7,14 +11,11 @@ var logOnOptions = {
 
 var authCode = ''; // code received by email
 
-if (require('fs').existsSync('sentry')) {
-  logOnOptions['shaSentryfile'] = require('fs').readFileSync('sentry');
+if (fs.existsSync('sentry')) {
+  logOnOptions['shaSentryfile'] = fs.readFileSync('sentry');
 } else if (authCode != '') {
   logOnOptions['authCode'] = authCode;
 }
-
-var Steam = require('steam');
-var SteamTradeOffers = require('../'); // change to 'steam-tradeoffers' if not running from the examples subdirectory
 
 var steam = new Steam.SteamClient();
 var offers = new SteamTradeOffers();
