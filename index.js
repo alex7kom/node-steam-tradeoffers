@@ -34,7 +34,7 @@ SteamTradeOffers.prototype.setAPIKey = function(key, callback) {
 	this.APIKey = key;
 
     if(typeof callback == 'function'){
-      callback(error);
+      callback();
     }
 }
 
