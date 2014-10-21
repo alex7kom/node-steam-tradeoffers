@@ -23,8 +23,20 @@ SteamTradeOffers.prototype.setup = function(sessionID, webCookie, callback){
     setCookie(self, name);
   });
 
-  getAPIKey(this, callback);
+  if (!self.APIKey){
+    getAPIKey(this, callback);
+  } else if(typeof callback == 'function'){
+    callback();
+  }
 };
+
+SteamTradeOffers.prototype.setAPIKey = function(key, callback) {
+	this.APIKey = key;
+
+    if(typeof callback == 'function'){
+      callback(error);
+    }
+}
 
 function getAPIKey(self, callback) {
   self._request.get({
@@ -49,6 +61,14 @@ function getAPIKey(self, callback) {
         self.APIKey = key;
         if(typeof callback == 'function'){
           callback();
+        }
+      } else if($('#parental_notice_instructions').html() == 'Adults, enter your PIN below to exit Family View.'){
+        self.APIKey = '';
+        var error = new Error('Access Denied: Family View Enabled');
+        if(typeof callback == 'function'){
+          callback(error);
+        } else {
+          throw error;
         }
       } else {
         self._request.post({
