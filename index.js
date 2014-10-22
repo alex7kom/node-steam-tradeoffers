@@ -85,6 +85,35 @@ function getAPIKey(self, callback) {
   }.bind(self));
 }
 
+SteamTradeOffers.prototype.getFamilyCookie = function(pin, callback) {
+  var self = this;
+
+  this._request.post({
+    url: 'http://store.steampowered.com/parental/ajaxunlock',
+    json: true,
+    headers: {
+      referer: 'http://store.steampowered.com/'
+    },
+    form: {
+      pin: pin
+    }
+  }, function(error, response, body) { 
+    if (error) {
+      self.emit('debug', 'unlocking family view: ' + error);
+      setTimeout(function() {
+        self.getFamilyCookie(pin, callback);
+      }, 1000);
+    } else if(typeof callback == 'function') {
+      if(body && body.success) {
+        callback();
+      } else {
+        var error = new Error('Invalid Family View PIN');
+        callback(error);
+      }
+    }
+  });
+}
+
 function setCookie(self, cookie) {
   self._j.add(request.cookie(cookie));
 }
