@@ -109,10 +109,10 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   }.bind(this));
 };
 
-SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback) {
+SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, lang, callback) {
   var self = this;
 
-  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1';
+  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1&l=' + lang;
 
   this._loadInventory([], uri, { json: true }, contextid, null, callback);
 };
