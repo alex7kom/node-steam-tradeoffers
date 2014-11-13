@@ -24,9 +24,6 @@ var offers = new SteamTradeOffers();
 offers.setup(sessionID, cookies);
 ```
 
-* `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
-* `cookies` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
-
 This setup will automatically register and retrieve Steam API key for you.
 
 # Examples
@@ -43,24 +40,43 @@ Please read the [FAQ](#faq) before creating an issue about examples.
 
 # Methods
 
-All callbacks will be supplied with error as the first argument or null if no errors occured.
+The first param for all methods is an object. The second param is callback. All callbacks supplied with `Error` as the first argument or `null` if no errors occured.
 
-## setup(sessionID, cookies[, callback])
+## setup(options[, callback])
 
 As noted above, this method is used to setup a web session. It also tries to retrieve Web API key. If you want to operate with trade offers right after startup, do it in callback of this method.
+
+Options:
+
+* `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
+* `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
+
 If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
 
-## loadMyInventory(appid, contextid, callback)
+## loadMyInventory(options, callback)
 
 Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
 
-## loadPartnerInventory(partnerSteamId, appid, contextid, callback)
+Options:
+
+* `appId` is a Steam AppID
+* `contextId` is an inventory context Id
+
+## loadPartnerInventory(options, callback)
 
 Loads your partner inventory for the given app and context.
 
+Options:
+
+* `partnerSteamId` is a SteamID of a trade partner
+* `appId` is a Steam AppID
+* `contextId` is an inventory context Id
+
 ## makeOffer(options[, callback])
 
-Makes a trade offer to the partner. `options` is an object of the following input params:
+Makes a trade offer to the partner.
+
+Options:
 
 * `partnerAccountId` or `partnerSteamId`, you need only one of those.
 * `accessToken` (optional) is a token from the public Trade URL of the partner.
@@ -85,13 +101,25 @@ If success the second param to `callback` will be an object with `tradeofferid` 
 ## getOffers(options, callback)
 ## getOffer(options, callback)
 
-The first method loads a list of trade offers, and the second loads just a single offer. `options` is an object of input params listed on the page [Steam Web API/IEconService](https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService). The second argument to `callback` will be an object that Steam Web API returns. The only thing to note is that the wrapper adds a property `steamid_other` with the SteamID of the trade partner to each `CEcon_TradeOffer` object in received trades.
+The first method loads a list of trade offers, and the second loads just a single offer.
 
-## declineOffer(tradeofferid[, callback])
-## acceptOffer(tradeofferid[, callback])
-## cancelOffer(tradeofferid[, callback])
+Options:
 
-`declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent. The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
+* See [Steam Web API/IEconService](https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService).
+
+ The second argument to `callback` will be an object that Steam Web API returns. The only thing to note is that the wrapper adds a property `steamid_other` with the SteamID of the trade partner to each `CEcon_TradeOffer` object in received trades.
+
+## declineOffer(options[, callback])
+## acceptOffer(options[, callback])
+## cancelOffer(options[, callback])
+
+`declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent.
+
+Options:
+
+* `tradeOfferId` is a trade offer Id
+
+The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
 
 # FAQ
 

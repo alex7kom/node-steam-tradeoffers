@@ -30,11 +30,17 @@ steam.on('loggedOn', function(result) {
 
 steam.on('webSessionID', function(sessionID) {
   steam.webLogOn(function(newCookie){
-    offers.setup(sessionID, newCookie, function(err) {
+    offers.setup({
+      sessionID: sessionID,
+      webCookie: newCookie
+    }, function(err) {
       if (err) {
         throw err;
       }
-      offers.loadMyInventory(440, 2, function(err, items) {
+      offers.loadMyInventory({
+        appId: 440,
+        contextId: 2
+      }, function(err, items) {
         var item;
         // picking first tradable item
         for (var i = 0; i < items.length; i++) {

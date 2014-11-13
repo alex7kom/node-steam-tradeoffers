@@ -14,12 +14,12 @@ function SteamTradeOffers() {
   this._request = request.defaults({jar:this._j});
 }
 
-SteamTradeOffers.prototype.setup = function(sessionID, webCookie, callback){
+SteamTradeOffers.prototype.setup = function(options, callback){
   var self = this;
 
-  this.sessionID = sessionID;
+  this.sessionID = options.sessionID;
 
-  webCookie.forEach(function(name){
+  options.webCookie.forEach(function(name){
     setCookie(self, name);
   });
 
@@ -109,22 +109,22 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   }.bind(this));
 };
 
-SteamTradeOffers.prototype.loadMyInventory = function(appid, contextid, callback) {
+SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var self = this;
 
-  var uri = 'http://steamcommunity.com/my/inventory/json/' + appid + '/' + contextid + '/?trading=1';
+  var uri = 'http://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1';
 
-  this._loadInventory([], uri, { json: true }, contextid, null, callback);
+  this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
 
-SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, contextid, callback) {
+SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
   var self = this;
 
   var form = {
     sessionid: this.sessionID,
-    partner: partner,
-    appid: appid,
-    contextid: contextid
+    partner: options.partnerSteamId,
+    appid: options.appId,
+    contextid: options.contextId
   };
 
   var uri = 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?' + querystring.stringify(form);
@@ -132,9 +132,9 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(partner, appid, conte
   this._loadInventory([], uri, {
     json: true,
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(partner)
+      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(options.partnerSteamId)
     }
-  }, contextid, null, callback);
+  }, options.contextId, null, callback);
 };
 
 function mergeWithDescriptions(items, descriptions, contextid) {
@@ -228,28 +228,28 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
   });
 };
 
-SteamTradeOffers.prototype.declineOffer = function(tradeofferid, callback) {
-  doAPICall(this, {method: 'DeclineTradeOffer/v1', params: {tradeofferid: tradeofferid}, post: true, callback: callback});
+SteamTradeOffers.prototype.declineOffer = function(options, callback) {
+  doAPICall(this, {method: 'DeclineTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
 };
 
-SteamTradeOffers.prototype.cancelOffer = function(tradeofferid, callback) {
-  doAPICall(this, {method: 'CancelTradeOffer/v1', params: {tradeofferid: tradeofferid}, post: true, callback: callback});
+SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
+  doAPICall(this, {method: 'CancelTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
 };
 
-SteamTradeOffers.prototype.acceptOffer = function(tradeofferid, callback) {
-  if (typeof tradeofferid == 'undefined') {
+SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
+  if (typeof options.tradeOfferId == 'undefined') {
     if(typeof callback == 'function'){
       callback(new Error('No options'));
     }
   } else {
     this._request.post({
-      uri: 'https://steamcommunity.com/tradeoffer/' + tradeofferid + '/accept',
+      uri: 'https://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/accept',
       headers: {
-        referer: 'http://steamcommunity.com/tradeoffer/' + tradeofferid + '/'
+        referer: 'http://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/'
       },
       form: {
         sessionid: this.sessionID,
-        tradeofferid: tradeofferid
+        tradeofferid: options.tradeOfferId
       }
     }, function(error, response, body) {
       if (error || response.statusCode != 200) {
