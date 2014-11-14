@@ -12,8 +12,8 @@
     "url": "https://github.com/Alex7Kom/node-steam-tradeoffers.git"
   },
   "dependencies": {
-    "request": "2.27.0",
     "cheerio": "*",
-    "long": "*"
+    "long": "*",
+    "request": "^2.48.0"
   }
 }

@@ -69,7 +69,7 @@ function getAPIKey(self, callback) {
 }
 
 function setCookie(self, cookie) {
-  self._j.add(request.cookie(cookie));
+  self._j.setCookie(request.cookie(cookie), 'https://steamcommunity.com');
 }
 
 SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, contextid, start, callback) {
