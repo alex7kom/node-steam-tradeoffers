@@ -119,7 +119,12 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var self = this;
 
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1';
+  var language = '';
+  if (options.language) {
+    language = '&l=' + options.language;
+  }
+
+  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
 
   this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
@@ -133,6 +138,10 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
     appid: options.appId,
     contextid: options.contextId
   };
+
+  if (options.language) {
+    form.l = options.language;
+  }
 
   var offer = 'new';
   if (options.tradeOfferId) {
