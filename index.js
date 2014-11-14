@@ -78,7 +78,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 
   this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
-      this.emit('debug', 'loading my inventory: ' + (error || (response.statusCode != 200 ? response.statusCode : '{}')));
+      this.emit('debug', 'loading inventory: ' + (error || (response.statusCode != 200 ? response.statusCode : '{}')));
       this._loadInventory(inventory, uri, options, contextid, start, callback);
     } else if (typeof body != 'object') {
       // no session
