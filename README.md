@@ -61,7 +61,7 @@ Options:
 
 * `appId` is the Steam AppID
 * `contextId` is the inventory context Id
-* `language` is the language for item descriptions
+* `language` (optional) is the language for item descriptions
 
 ## loadPartnerInventory(options, callback)
 
@@ -73,7 +73,7 @@ Options:
 * `appId` is the Steam AppID
 * `contextId` is the inventory context Id
 * `tradeOfferId` (optional) is needed to load private inventory of the trade partner for received trade offer
-* `language` is the language for item descriptions
+* `language` (optional) is the language for item descriptions
 
 ## makeOffer(options[, callback])
 
