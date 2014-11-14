@@ -257,13 +257,23 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
         tradeofferid: options.tradeOfferId
       }
     }, function(error, response, body) {
-      if (error || response.statusCode != 200) {
+      var result = {};
+      try {
+        result = JSON.parse(body) || {};
+      } catch(e) {
         if(typeof callback == 'function'){
-          callback(error || new Error(response.statusCode));
+          return callback(e);
+        }
+      }
+
+      if (error || response.statusCode != 200) {
+        self.emit('debug', 'accepting offer: ' + (error || response.statusCode));
+        if(typeof callback == 'function'){
+          callback(error || new Error(result.strError || response.statusCode));
         }
       } else {
         if(typeof callback == 'function'){
-          callback(null, {response:{}});
+          callback(null, result);
         }
       }
     });
