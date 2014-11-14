@@ -71,6 +71,7 @@ Options:
 * `partnerSteamId` is a SteamID of a trade partner
 * `appId` is a Steam AppID
 * `contextId` is an inventory context Id
+* `tradeOfferId` (optional) is needed to load private inventory of a trade partner for received trade offer
 
 ## makeOffer(options[, callback])
 

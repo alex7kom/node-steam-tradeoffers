@@ -127,12 +127,17 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
     contextid: options.contextId
   };
 
-  var uri = 'http://steamcommunity.com/tradeoffer/new/partnerinventory/?' + querystring.stringify(form);
+  var offer = 'new';
+  if (options.tradeOfferId) {
+    offer = options.tradeOfferId;
+  }
+
+  var uri = 'http://steamcommunity.com/tradeoffer/' + offer + '/partnerinventory/?' + querystring.stringify(form);
 
   this._loadInventory([], uri, {
     json: true,
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/new/?partner=' + toAccountId(options.partnerSteamId)
+      referer: 'http://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(options.partnerSteamId)
     }
   }, options.contextId, null, callback);
 };
