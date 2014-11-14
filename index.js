@@ -35,7 +35,9 @@ function getAPIKey(self, callback) {
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
-      getAPIKey(self, callback);
+      if(typeof callback == 'function'){
+        callback(error || response.statusCode);
+      }
     } else {
       var $ = cheerio.load(body);
       if ($('#mainContents h2').html() == 'Access Denied') {
@@ -82,9 +84,9 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
       this.emit('debug', 'loading inventory: ' + (error || (response.statusCode != 200 ? response.statusCode : '{}')));
-      setTimeout(function(){
-        this._loadInventory(inventory, uri, options, contextid, start, callback);
-      }.bind(this), 1000);
+      if(typeof callback == 'function'){
+        callback(new Error(error || (response.statusCode != 200 ? response.statusCode : 'Blank response')));
+      }
     } else if (typeof body != 'object') {
       // no session
       if(typeof callback == 'function'){
