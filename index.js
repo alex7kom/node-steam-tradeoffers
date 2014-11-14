@@ -28,7 +28,7 @@ SteamTradeOffers.prototype.setup = function(options, callback){
 
 function getAPIKey(self, callback) {
   self._request.get({
-    uri: 'http://steamcommunity.com/dev/apikey'
+    uri: 'https://steamcommunity.com/dev/apikey'
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
@@ -52,7 +52,7 @@ function getAPIKey(self, callback) {
         }
       } else {
         self._request.post({
-          uri: 'http://steamcommunity.com/dev/registerkey',
+          uri: 'https://steamcommunity.com/dev/registerkey',
           form: {
             domain: 'localhost',
             agreeToTerms: 1
@@ -112,7 +112,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var self = this;
 
-  var uri = 'http://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1';
+  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1';
 
   this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
@@ -132,12 +132,12 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
     offer = options.tradeOfferId;
   }
 
-  var uri = 'http://steamcommunity.com/tradeoffer/' + offer + '/partnerinventory/?' + querystring.stringify(form);
+  var uri = 'https://steamcommunity.com/tradeoffer/' + offer + '/partnerinventory/?' + querystring.stringify(form);
 
   this._loadInventory([], uri, {
     json: true,
     headers: {
-      referer: 'http://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(options.partnerSteamId)
+      referer: 'https://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(options.partnerSteamId)
     }
   }, options.contextId, null, callback);
 };
@@ -157,7 +157,7 @@ function mergeWithDescriptions(items, descriptions, contextid) {
 
 function doAPICall(self, options) {
   var request_params = {
-    uri: 'http://api.steampowered.com/IEconService/' + options.method + '/?key=' + self.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
+    uri: 'https://api.steampowered.com/IEconService/' + options.method + '/?key=' + self.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
     json: true,
     method: options.post ? 'POST' : 'GET'
   };
@@ -250,7 +250,7 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     this._request.post({
       uri: 'https://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/accept',
       headers: {
-        referer: 'http://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/'
+        referer: 'https://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/'
       },
       form: {
         sessionid: this.sessionID,
@@ -306,10 +306,10 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   
   if (typeof options.counteredTradeOffer != 'undefined') {
     formFields.tradeofferid_countered = options.counteredTradeOffer;
-    var referer = 'http://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
+    var referer = 'https://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
   }
   else {
-    var referer = 'http://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
+    var referer = 'https://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
   }
 
   this._request.post({
