@@ -27,6 +27,9 @@ SteamTradeOffers.prototype.setup = function(options, callback){
 };
 
 function getAPIKey(self, callback) {
+  if (self.APIKey) {
+    return callback();
+  }
   self._request.get({
     uri: 'https://steamcommunity.com/dev/apikey'
   }, function(error, response, body) {
