@@ -59,8 +59,9 @@ Loads your inventory for the given app and context. For example, use 440 and 2 f
 
 Options:
 
-* `appId` is a Steam AppID
-* `contextId` is an inventory context Id
+* `appId` is the Steam AppID
+* `contextId` is the inventory context Id
+* `language` is the language for item descriptions
 
 ## loadPartnerInventory(options, callback)
 
@@ -68,10 +69,11 @@ Loads your partner inventory for the given app and context.
 
 Options:
 
-* `partnerSteamId` is a SteamID of a trade partner
-* `appId` is a Steam AppID
-* `contextId` is an inventory context Id
-* `tradeOfferId` (optional) is needed to load private inventory of a trade partner for received trade offer
+* `partnerSteamId` is the SteamID of the trade partner
+* `appId` is the Steam AppID
+* `contextId` is the inventory context Id
+* `tradeOfferId` (optional) is needed to load private inventory of the trade partner for received trade offer
+* `language` is the language for item descriptions
 
 ## makeOffer(options[, callback])
 
