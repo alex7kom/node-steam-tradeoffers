@@ -148,6 +148,10 @@ There are also some cases when Steam fails to send a trade offer due to its inte
 
 A. It means that `node-steam` at least once failed to get cookies from Steam. Most of the time you can safely ignore it.
 
+### Q. I get some strange errors, 401, 403, etc.
+
+A. In some cases 401 error means your cookies are no longer valid, you need to get new cookies from Steam. In `node-steam` try to do `.webLogOn` again and re-setup trade offers.
+
 ### Q. I don't see my question answered here. Can I email you or add you on Steam?
 
 A. No. Feel free to open an issue, but try search first.
@@ -160,7 +164,7 @@ I appreciate your time and efforts you put in your pull requests, but please fol
 
   2. If you did some research and/or reverse engineering, that is great! However, please do not put the results in the code right away, create an issue.
 
-  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase` into one commit.
+  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase` into one commit. Please do one pull request per bug/feature.
 
 I reserve the right to close any pull request and/or rewrite your feature or fix myself.
 
