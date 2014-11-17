@@ -258,6 +258,7 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
+  var self = this;
   if (typeof options.tradeOfferId == 'undefined') {
     if(typeof callback == 'function'){
       callback(new Error('No options'));
