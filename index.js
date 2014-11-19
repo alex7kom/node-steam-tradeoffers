@@ -272,6 +272,7 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
       },
       form: {
         sessionid: this.sessionID,
+        serverid: 1,
         tradeofferid: options.tradeOfferId
       }
     }, function(error, response, body) {
@@ -317,6 +318,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   };
 
   var formFields = {
+    serverid: 1,
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
     tradeoffermessage: options.message || "",
