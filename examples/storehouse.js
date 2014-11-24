@@ -33,6 +33,12 @@ steam.on('webSessionID', function(sessionID) {
     offers.setup({
       sessionID: sessionID,
       webCookie: newCookie
+    }, function(err) {
+      offers.getAPIKey(function(err) {
+        if(err) {
+          throw err;
+        }
+      });
     });
   });
 });

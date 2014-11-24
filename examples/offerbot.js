@@ -33,43 +33,45 @@ steam.on('webSessionID', function(sessionID) {
     offers.setup({
       sessionID: sessionID,
       webCookie: newCookie
-    }, function(err) {
-      if (err) {
-        throw err;
-      }
-      offers.loadMyInventory({
-        appId: 440,
-        contextId: 2
-      }, function(err, items) {
-        var item;
-        // picking first tradable item
-        for (var i = 0; i < items.length; i++) {
-          if (items[i].tradable) {
-            item = items[i];
-            break;
-          }
+    }, function() {
+      offers.getAPIKey(function(err) {
+        if (err) {
+          throw err;
         }
-        // if there is such an item, making an offer with it
-        if (item) {
-          offers.makeOffer ({
-            partnerSteamId: admin,
-            itemsFromMe: [
-              {
-                appid: 440,
-                contextid: 2,
-                amount: 1,
-                assetid: item.id
-              }
-            ],
-            itemsFromThem: [],
-            message: 'This is test'
-          }, function(err, response){
-            if (err) {
-              throw err;
+        offers.loadMyInventory({
+          appId: 440,
+          contextId: 2
+        }, function(err, items) {
+          var item;
+          // picking first tradable item
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].tradable) {
+              item = items[i];
+              break;
             }
-            console.log(response);
-          });
-        }
+          }
+          // if there is such an item, making an offer with it
+          if (item) {
+            offers.makeOffer ({
+              partnerSteamId: admin,
+              itemsFromMe: [
+                {
+                  appid: 440,
+                  contextid: 2,
+                  amount: 1,
+                  assetid: item.id
+                }
+              ],
+              itemsFromThem: [],
+              message: 'This is test'
+            }, function(err, response){
+              if (err) {
+                throw err;
+              }
+              console.log(response);
+            });
+          }
+        });
       });
     });
   });

@@ -21,10 +21,10 @@ var offers = new SteamTradeOffers();
 ...then setup session:
 
 ```js
-offers.setup(sessionID, cookies);
+offers.setup({"sessionID": sessionID, "webCookie": cookies}, function() { offers.getAPIKey(); });
 ```
 
-This setup will automatically register and retrieve Steam API key for you.
+This setup will automatically register and retrieve a Steam API key for you.
 
 # Examples
 
@@ -40,18 +40,22 @@ Please read the [FAQ](#faq) before creating an issue about examples.
 
 # Methods
 
-The first param for all methods is an object. The second param is callback. All callbacks supplied with `Error` as the first argument or `null` if no errors occured.
+The first param for most methods is an object. The second param is callback. All callbacks supplied with `Error` as the first argument or `null` if no errors occured.
 
 ## setup(options[, callback])
 
-As noted above, this method is used to setup a web session. It also tries to retrieve Web API key. If you want to operate with trade offers right after startup, do it in callback of this method.
+As noted above, this method is used to setup a web session. 
 
 Options:
 
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
 * `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
 
-If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
+## getAPIKey([callback])
+
+Retrieves the APIKey automatically.
+
+If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `getAPIKey` will return the error `Access Denied` in callback. If the account has family view enabled, it will return the error `Access Denied: Family View Enabled` in callback. If there is an error and no callback is provided, it will throw an error.
 
 ## loadMyInventory(options, callback)
 

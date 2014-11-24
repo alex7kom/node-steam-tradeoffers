@@ -22,15 +22,18 @@ SteamTradeOffers.prototype.setup = function(options, callback){
   options.webCookie.forEach(function(name){
     setCookie(self, name);
   });
-
-  getAPIKey(this, callback);
+  
+  if(typeof callback == 'function'){
+    callback();
+  }   
 };
 
-function getAPIKey(self, callback) {
-  if (self.APIKey) {
+SteamTradeOffers.prototype.getAPIKey = function(callback) {
+  var self = this;
+  if (this.APIKey) {
     return callback();
   }
-  self._request.get({
+  this._request.get({
     uri: 'https://steamcommunity.com/dev/apikey'
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
@@ -55,6 +58,13 @@ function getAPIKey(self, callback) {
         if(typeof callback == 'function'){
           callback();
         }
+      } else if($('#parental_notice_instructions').html()){
+        var error = new Error('Access Denied: Family View Enabled');
+        if(typeof callback == 'function'){
+          callback(error);
+        } else {
+          throw error;
+        }
       } else {
         self._request.post({
           uri: 'https://steamcommunity.com/dev/registerkey',
@@ -63,11 +73,37 @@ function getAPIKey(self, callback) {
             agreeToTerms: 1
           }
         }, function(error, response, body) {
-          getAPIKey(self, callback);
+          self.getAPIKey(callback);
         }.bind(self));
       }
     }
   }.bind(self));
+};
+
+SteamTradeOffers.prototype.getFamilyCookie = function(options, callback) {
+  var self = this;
+
+  this.emit('debug', 'fetching family cookie');
+  this._request.post({
+    url: 'https://steamcommunity.com/parental/ajaxunlock',
+    json: true,
+    headers: {
+      referer: 'https://steamcommunity.com/'
+    },
+    form: {
+      pin: options.pin
+    }
+  }, function(error, response, body) { 
+    if (error) {
+	  callback(new Error("Invalid Response"));
+    } else if(typeof callback == 'function') {
+      if(body && body.success) {
+        callback();
+      } else {
+        callback(new Error('Invalid Family View PIN'));
+      }
+    }
+  });
 }
 
 function setCookie(self, cookie) {
