@@ -21,7 +21,7 @@ var offers = new SteamTradeOffers();
 ...then setup session:
 
 ```js
-offers.setup(sessionID, cookies);
+offers.setup({ sessionID: sessionID, webCookie: cookies });
 ```
 
 This setup will automatically register and retrieve Steam API key for you.
