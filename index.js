@@ -240,7 +240,9 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
           callback(error);
         }
       } else {
-        res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        if (res && res.response && res.response.offer && res.response.offer.steamid_other) {
+          res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        }
         if(typeof callback == 'function'){
           callback(null, res);
         }
