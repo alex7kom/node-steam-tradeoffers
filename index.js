@@ -23,12 +23,17 @@ SteamTradeOffers.prototype.setup = function(options, callback){
     setCookie(self, name);
   });
 
+  if (options.apiKey)
+    this.APIKey = options.apiKey;
+
   getAPIKey(this, callback);
 };
 
 function getAPIKey(self, callback) {
   if (self.APIKey) {
-    return callback();
+    if (typeof callback === 'function')
+      return callback();
+    return;
   }
   self._request.get({
     uri: 'https://steamcommunity.com/dev/apikey'
