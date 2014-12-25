@@ -128,8 +128,10 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   if (options.language) {
     language = '&l=' + options.language;
   }
-
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
+  if (options.tradable === false)
+    var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?' + language;
+  else
+    var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
 
   this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
