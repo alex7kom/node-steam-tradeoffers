@@ -50,6 +50,7 @@ Options:
 
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
 * `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
+* `apiKey` (optional) is a Steam API key.  This will be filled automatically if not supplied.
 
 If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
 
@@ -62,6 +63,7 @@ Options:
 * `appId` is the Steam AppID
 * `contextId` is the inventory context Id
 * `language` (optional) is the language for item descriptions
+* `tradable` (optional) set to false to also load untradable items
 
 ## loadPartnerInventory(options, callback)
 
