@@ -80,7 +80,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       self.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
-      getOfferToken(self, callback);
+      callback(error, null);
     } else {
       var $ = cheerio.load(body);
 
@@ -88,7 +88,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
       var offerToken = url.parse(offerUrl, true).query.token;
 
       if (typeof callback == 'function') {
-        callback(offerToken);
+        callback(null, offerToken);
       }
 
     }
