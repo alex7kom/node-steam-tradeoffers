@@ -23,12 +23,17 @@ SteamTradeOffers.prototype.setup = function(options, callback){
     setCookie(self, name);
   });
 
+  if (options.apiKey)
+    this.APIKey = options.apiKey;
+
   getAPIKey(this, callback);
 };
 
 function getAPIKey(self, callback) {
   if (self.APIKey) {
-    return callback();
+    if (typeof callback === 'function')
+      return callback();
+    return;
   }
   self._request.get({
     uri: 'https://steamcommunity.com/dev/apikey'
@@ -123,8 +128,10 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   if (options.language) {
     language = '&l=' + options.language;
   }
-
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
+  if (options.tradable === false)
+    var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?' + language;
+  else
+    var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
 
   this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
