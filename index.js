@@ -3,6 +3,7 @@ module.exports = SteamTradeOffers;
 var request = require('request');
 var cheerio = require('cheerio');
 var Long = require('long');
+var url = require('url');
 var querystring = require('querystring');
 
 require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
@@ -71,6 +72,33 @@ function getAPIKey(self, callback) {
       }
     }
   }.bind(self));
+}
+
+
+SteamTradeOffers.prototype.getOfferToken = function(callback) {
+  var self = this;
+
+  self._request.get({
+    uri: 'http://steamcommunity.com/id/me/tradeoffers/privacy'
+  }, function(error, response, body) {
+    if (error || response.statusCode != 200) {
+      self.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
+
+      if (typeof callback == 'function') {
+        callback(new Error(error || response.statusCode), null);
+      }
+    } else {
+      var $ = cheerio.load(body);
+
+      var offerUrl = $('input#trade_offer_access_url').val();
+      var offerToken = url.parse(offerUrl, true).query.token;
+
+      if (typeof callback == 'function') {
+        callback(null, offerToken);
+      }
+
+    }
+  });
 }
 
 function setCookie(self, cookie) {
