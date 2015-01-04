@@ -269,7 +269,9 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
           callback(error);
         }
       } else {
-        res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        if (res.response.offer !== undefined) {
+          res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        }
         if(typeof callback == 'function'){
           callback(null, res);
         }
