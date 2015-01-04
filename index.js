@@ -213,13 +213,13 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
           callback(error);
         }
       } else {
-        if (res.response.trade_offers_received !== undefined) {
+        if (res && res.response && res.response.trade_offers_received !== undefined) {
           res.response.trade_offers_received = res.response.trade_offers_received.map(function(offer) {
             offer.steamid_other = toSteamId(offer.accountid_other);
             return offer;
           });
         }
-        if (res.response.trade_offers_sent !== undefined) {
+        if (res && res.response && res.response.trade_offers_sent !== undefined) {
           res.response.trade_offers_sent = res.response.trade_offers_sent.map(function(offer) {
             offer.steamid_other = toSteamId(offer.accountid_other);
             return offer;
@@ -243,7 +243,9 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
           callback(error);
         }
       } else {
-        res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        if (res && res.response && res.response.offer && res.response.offer.accountid_other) {
+          res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
+        }
         if(typeof callback == 'function'){
           callback(null, res);
         }
