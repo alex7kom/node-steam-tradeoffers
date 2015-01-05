@@ -76,5 +76,5 @@ steam.on('webSessionID', function(sessionID) {
 });
 
 steam.on('sentry', function(data) {
-  fs.writeFileSync('sentry', data);
+  require('fs').writeFileSync('sentry', data);
 });
