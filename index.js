@@ -12,76 +12,72 @@ function SteamTradeOffers() {
   require('events').EventEmitter.call(this);
 
   this._j = request.jar();
-  this._request = request.defaults({jar:this._j});
+  this._request = request.defaults({ jar: this._j });
 }
 
-SteamTradeOffers.prototype.setup = function(options, callback){
-  var self = this;
-
+SteamTradeOffers.prototype.setup = function(options, callback) {
   this.sessionID = options.sessionID;
 
-  options.webCookie.forEach(function(name){
-    setCookie(self, name);
-  });
+  options.webCookie.forEach(function(name) {
+    setCookie.bind(this)(name);
+  }.bind(this));
 
-  getAPIKey(this, callback);
+  getAPIKey.bind(this)(callback);
 };
 
-function getAPIKey(self, callback) {
-  if (self.APIKey) {
-    if(typeof callback == 'function'){
+function getAPIKey(callback) {
+  if (this.APIKey) {
+    if (typeof callback == 'function') {
       callback();
     }
     return;
   }
-  self._request.get({
+  this._request.get({
     uri: 'https://steamcommunity.com/dev/apikey'
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      self.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
-      if(typeof callback == 'function'){
+      this.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
+      if (typeof callback == 'function') {
         callback(error || response.statusCode);
       }
     } else {
       var $ = cheerio.load(body);
       if ($('#mainContents h2').html() == 'Access Denied') {
-        self.emit('debug', 'retrieving apikey: access denied (probably limited account)');
-        self.APIKey = '';
-        var error = new Error('Access Denied');
-        if(typeof callback == 'function'){
-          callback(error);
+        this.emit('debug', 'retrieving apikey: access denied (probably limited account)');
+        this.APIKey = '';
+        var accessError = new Error('Access Denied');
+        if (typeof callback == 'function') {
+          callback(accessError);
         } else {
-          throw error;
+          throw accessError;
         }
-      } else if($('#bodyContents_ex h2').html() == 'Your Steam Web API Key'){
+      } else if ($('#bodyContents_ex h2').html() == 'Your Steam Web API Key') {
         var key = $('#bodyContents_ex p').html().split(' ')[1];
-        self.APIKey = key;
-        if(typeof callback == 'function'){
+        this.APIKey = key;
+        if (typeof callback == 'function') {
           callback();
         }
       } else {
-        self._request.post({
+        this._request.post({
           uri: 'https://steamcommunity.com/dev/registerkey',
           form: {
             domain: 'localhost',
             agreeToTerms: 1
           }
         }, function(error, response, body) {
-          getAPIKey(self, callback);
-        }.bind(self));
+          getAPIKey.bind(this)(callback);
+        }.bind(this));
       }
     }
-  }.bind(self));
+  }.bind(this));
 }
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
-  var self = this;
-
-  self._request.get({
+  this._request.get({
     uri: 'https://steamcommunity.com/id/me/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      self.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
+      this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
 
       if (typeof callback == 'function') {
         callback(new Error(error || response.statusCode));
@@ -96,11 +92,11 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
         callback(null, offerToken);
       }
     }
-  });
+  }.bind(this));
 };
 
-function setCookie(self, cookie) {
-  self._j.setCookie(request.cookie(cookie), 'https://steamcommunity.com');
+function setCookie(cookie) {
+  this._j.setCookie(request.cookie(cookie), 'https://steamcommunity.com');
 }
 
 SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, contextid, start, callback) {
@@ -113,22 +109,22 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
       this.emit('debug', 'loading inventory: ' + (error || (response.statusCode != 200 ? response.statusCode : '{}')));
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         callback(new Error(error || (response.statusCode != 200 ? response.statusCode : 'Blank response')));
       }
     } else if (typeof body != 'object') {
       // no session
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         callback(new Error('No session'));
       }
-    } else if (body.success == false) {
+    } else if (body.success === false) {
       // inventory not found
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         callback(new Error('Inventory not found'));
       }
     } else if (Object.prototype.toString.apply(body) == '[object Array]') {
       //private inventory
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         callback(new Error('Inventory is private'));
       }
     } else {
@@ -137,7 +133,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
       if (body.more) {
         this._loadInventory(inventory, uri, options, contextid, body.more_start, callback);
       } else {
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(null, inventory);
         }
       }
@@ -146,8 +142,6 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 };
 
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
-  var self = this;
-
   var query = {};
 
   if (options.language) {
@@ -164,8 +158,6 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
-  var self = this;
-
   var form = {
     sessionid: this.sessionID,
     partner: options.partnerSteamId,
@@ -205,42 +197,42 @@ function mergeWithDescriptions(items, descriptions, contextid) {
   });
 }
 
-function doAPICall(self, options) {
-  var request_params = {
-    uri: 'https://api.steampowered.com/IEconService/' + options.method + '/?key=' + self.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
+function doAPICall(options) {
+  var params = {
+    uri: 'https://api.steampowered.com/IEconService/' + options.method + '/?key=' + this.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
     json: true,
     method: options.post ? 'POST' : 'GET'
   };
 
   if (options.post) {
-    request_params.form = options.params;
+    params.form = options.params;
   }
 
-  request(request_params, function(error, response, body) {
+  request(params, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      self.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
-      if(typeof options.callback == 'function'){
+      this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
+      if (typeof options.callback == 'function') {
         options.callback(error || new Error(response.statusCode));
       }
     } else if (typeof body != 'object') {
-      if(typeof options.callback == 'function'){
+      if (typeof options.callback == 'function') {
         options.callback(new Error('Invalid response'));
       }
     } else {
-      if(typeof options.callback == 'function'){
+      if (typeof options.callback == 'function') {
         options.callback(null, body);
       }
     }
-  });
+  }.bind(this));
 }
 
 SteamTradeOffers.prototype.getOffers = function(options, callback) {
-  doAPICall(this, {
+  doAPICall.bind(this)({
     method: 'GetTradeOffers/v1',
     params: options,
     callback: function(error, res) {
       if (error) {
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(error);
         }
       } else {
@@ -256,7 +248,7 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
             return offer;
           });
         }
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(null, res);
         }
       }
@@ -265,19 +257,19 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getOffer = function(options, callback) {
-  doAPICall(this, {
+  doAPICall.bind(this)({
     method: 'GetTradeOffer/v1',
     params: options,
     callback: function(error, res) {
       if (error) {
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(error);
         }
       } else {
         if (res.response.offer !== undefined) {
           res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
         }
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(null, res);
         }
       }
@@ -286,18 +278,16 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.declineOffer = function(options, callback) {
-  doAPICall(this, {method: 'DeclineTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
+  doAPICall.bind(this)({method: 'DeclineTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
 };
 
 SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
-  doAPICall(this, {method: 'CancelTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
+  doAPICall.bind(this)({method: 'CancelTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
-  var self = this;
-
-  if (typeof options.tradeOfferId == 'undefined') {
-    if(typeof callback == 'function'){
+  if (options.tradeOfferId === undefined) {
+    if (typeof callback == 'function') {
       callback(new Error('No options'));
     }
   } else {
@@ -316,22 +306,22 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
       try {
         result = JSON.parse(body) || {};
       } catch(e) {
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           return callback(e);
         }
       }
 
       if (error || response.statusCode != 200) {
-        self.emit('debug', 'accepting offer: ' + (error || response.statusCode));
-        if(typeof callback == 'function'){
+        this.emit('debug', 'accepting offer: ' + (error || response.statusCode));
+        if (typeof callback == 'function') {
           callback(error || new Error(result.strError || response.statusCode));
         }
       } else {
-        if(typeof callback == 'function'){
+        if (typeof callback == 'function') {
           callback(null, result);
         }
       }
-    });
+    }.bind(this));
   }
 };
 
@@ -344,20 +334,18 @@ function toAccountId(steamId) {
 }
 
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
-  var self = this;
-
   var tradeoffer = {
-    "newversion":true,
-    "version":2,
-    "me":{"assets": options.itemsFromMe,"currency":[],"ready":false},
-    "them":{"assets": options.itemsFromThem,"currency":[],"ready":false}
+    newversion: true,
+    version: 2,
+    me: { assets: options.itemsFromMe, currency: [], ready: false },
+    them: { assets: options.itemsFromThem, currency: [], ready: false }
   };
 
   var formFields = {
     serverid: 1,
     sessionid: this.sessionID,
     partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
-    tradeoffermessage: options.message || "",
+    tradeoffermessage: options.message || '',
     json_tradeoffer: JSON.stringify(tradeoffer)
   };
 
@@ -365,17 +353,17 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     partner: options.partnerAccountId || toAccountId(options.partnerSteamId)
   };
 
-  if(typeof options.accessToken != 'undefined'){
+  if (options.accessToken !== undefined) {
     formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
     query.token = options.accessToken;
-  };
-  
-  if (typeof options.counteredTradeOffer != 'undefined') {
-    formFields.tradeofferid_countered = options.counteredTradeOffer;
-    var referer = 'https://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
   }
-  else {
-    var referer = 'https://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
+  
+  var referer;
+  if (options.counteredTradeOffer !== undefined) {
+    formFields.tradeofferid_countered = options.counteredTradeOffer;
+    referer = 'https://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
+  } else {
+    referer = 'https://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
   }
 
   this._request.post({
@@ -389,20 +377,20 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     try {
       result = JSON.parse(body) || {};
     } catch(e) {
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         return callback(e);
       }
     }
 
     if (error || response.statusCode != 200) {
-      self.emit('debug', 'making an offer: ' + (error || response.statusCode));
-      if(typeof callback == 'function'){
+      this.emit('debug', 'making an offer: ' + (error || response.statusCode));
+      if (typeof callback == 'function') {
         callback(error || new Error(result.strError || response.statusCode));
       }
     } else {
-      if(typeof callback == 'function'){
+      if (typeof callback == 'function') {
         callback(null, result);
       }
     }
-  });
+  }.bind(this));
 };
