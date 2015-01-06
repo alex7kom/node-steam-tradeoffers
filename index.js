@@ -79,18 +79,14 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
     if (error || response.statusCode != 200) {
       this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
 
-      if (typeof callback == 'function') {
-        callback(new Error(error || response.statusCode));
-      }
+      callback(new Error(error || response.statusCode));
     } else {
       var $ = cheerio.load(body);
 
       var offerUrl = $('input#trade_offer_access_url').val();
       var offerToken = url.parse(offerUrl, true).query.token;
 
-      if (typeof callback == 'function') {
-        callback(null, offerToken);
-      }
+      callback(null, offerToken);
     }
   }.bind(this));
 };
@@ -109,33 +105,23 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200 || JSON.stringify(body) == '{}') {
       this.emit('debug', 'loading inventory: ' + (error || (response.statusCode != 200 ? response.statusCode : '{}')));
-      if (typeof callback == 'function') {
-        callback(new Error(error || (response.statusCode != 200 ? response.statusCode : 'Blank response')));
-      }
+      callback(new Error(error || (response.statusCode != 200 ? response.statusCode : 'Blank response')));
     } else if (typeof body != 'object') {
       // no session
-      if (typeof callback == 'function') {
-        callback(new Error('No session'));
-      }
+      callback(new Error('No session'));
     } else if (body.success === false) {
       // inventory not found
-      if (typeof callback == 'function') {
-        callback(new Error('Inventory not found'));
-      }
+      callback(new Error('Inventory not found'));
     } else if (Object.prototype.toString.apply(body) == '[object Array]') {
       //private inventory
-      if (typeof callback == 'function') {
-        callback(new Error('Inventory is private'));
-      }
+      callback(new Error('Inventory is private'));
     } else {
       inventory = inventory.concat(mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
         .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
       if (body.more) {
         this._loadInventory(inventory, uri, options, contextid, body.more_start, callback);
       } else {
-        if (typeof callback == 'function') {
-          callback(null, inventory);
-        }
+        callback(null, inventory);
       }
     }
   }.bind(this));
@@ -232,9 +218,7 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
     params: options,
     callback: function(error, res) {
       if (error) {
-        if (typeof callback == 'function') {
-          callback(error);
-        }
+        callback(error);
       } else {
         if (res.response.trade_offers_received !== undefined) {
           res.response.trade_offers_received = res.response.trade_offers_received.map(function(offer) {
@@ -248,9 +232,7 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
             return offer;
           });
         }
-        if (typeof callback == 'function') {
-          callback(null, res);
-        }
+        callback(null, res);
       }
     }
   });
@@ -262,16 +244,12 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
     params: options,
     callback: function(error, res) {
       if (error) {
-        if (typeof callback == 'function') {
-          callback(error);
-        }
+        callback(error);
       } else {
         if (res.response.offer !== undefined) {
           res.response.offer.steamid_other = toSteamId(res.response.offer.accountid_other);
         }
-        if (typeof callback == 'function') {
-          callback(null, res);
-        }
+        callback(null, res);
       }
     }
   });
