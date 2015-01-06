@@ -148,12 +148,17 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var self = this;
 
-  var language = '';
+  var query = {};
+
   if (options.language) {
-    language = '&l=' + options.language;
+    query.l = options.language;
   }
 
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?trading=1' + language;
+  if (options.tradableOnly !== false) {
+    query.trading = 1;
+  }
+
+  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?' + querystring.stringify(query);
 
   this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
 };
