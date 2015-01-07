@@ -50,6 +50,7 @@ Options:
 
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
 * `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
+* `PIN` is a Family View PIN, required if account uses Family View.
 
 If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
 

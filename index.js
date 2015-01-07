@@ -22,8 +22,47 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
     setCookie.bind(this)(name);
   }.bind(this));
 
+  if (options.PIN) {
+    return parentalUnlock.bind(this)(options.PIN, function(error) {
+      if (error) {
+        if (typeof callback == 'function') {
+          return callback(error);
+        } else {
+          throw error;
+        }
+      }
+      getAPIKey.bind(this)(callback);
+    }.bind(this));
+  }
   getAPIKey.bind(this)(callback);
 };
+
+function parentalUnlock(PIN, callback) {
+  this._request.post({
+    uri: 'https://steamcommunity.com/parental/ajaxunlock',
+    json: true,
+    headers: {
+      referer: 'https://steamcommunity.com/'
+    },
+    form: {
+      pin: PIN
+    }
+  }, function(error, response, body) {
+    if (error || response.statusCode != 200) {
+      this.emit('debug', 'family view: ' + (error || response.statusCode));
+      return callback(error || response.statusCode);
+    }
+    if (!body || typeof body.success != 'boolean') {
+      this.emit('debug', 'family view: invalid response');
+      return callback(new Error('Invalid Response'));
+    }
+    if (!body.success) {
+      this.emit('debug', 'family view: incorrect PIN code');
+      return callback(new Error('Incorrect PIN'));
+    }
+    callback();
+  }.bind(this));
+}
 
 function getAPIKey(callback) {
   if (this.APIKey) {
