@@ -1,8 +1,22 @@
 # Steam Trade Offers for Node.js
 
+_Please_ read the [FAQ](#faq) before creating any issue and [How to contribute](#how-to-contribute) section before creating any pull request.
+
 Allows you to automate Steam trading using trade offers in Node.js. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
 
 __Note__: By using this library you automatically agree to [Steam API Terms of Use](http://steamcommunity.com/dev/apiterms)
+
+# What this IS and what this IS NOT
+
+`steam-tradeoffers` is a library for Node.js written in JavaScript.
+
+`steam-tradeoffers` is not a complete solution for any of your needs.
+
+To use `steam-tradeoffers` you need to know how to code in JavaScript.
+
+The examples are NOT templates for your bot.
+
+If you don't understand the code in the examples, the library is probably not for you.
 
 # Installation
 
@@ -168,13 +182,13 @@ A. No. Feel free to open an issue, but try search first.
 
 I appreciate your time and efforts you put in your pull requests, but please follow next simple rules so your efforts wouldn't be in vain.
 
-  1. Please consider creating an issue ticket (bug report or feature request) before doing any code. Clearly state your issue or changes and I'll do my best to implement a new feature (if it fits the library) or fix the library.
+  1. Please consider creating an issue before doing any code. I'll do my best to implement a new feature (if it fits the library) or fix the library.
 
-  2. If you did some research and/or reverse engineering, that is great! However, please do not put the results in the code right away, create an issue.
+  2. If you did some research, that is great! However, please do not put the results in the code right away, create an issue.
 
-  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase` into one commit. Please do one pull request per bug/feature.
+  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase -i` into one commit. __Always__ do only one pull request per bug/feature. 
 
-I reserve the right to close any pull request and/or rewrite your feature or fix myself.
+I reserve the right to close any pull request and/or rewrite your feature or fix myself. Please note that reviewing and testing your code also takes time so your changes won't be merged immediately after submission.
 
 Thank you.
 
