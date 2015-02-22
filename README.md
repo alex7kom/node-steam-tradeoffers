@@ -1,14 +1,14 @@
-# Steam Trade Offers for Node.js
+# Steam Trade Offers for Node.js and io.js
 
 _Please_ read the [FAQ](#faq) before creating any issue and [How to contribute](#how-to-contribute) section before creating any pull request.
 
 Allows you to automate Steam trading using trade offers in Node.js. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
 
-__Note__: By using this library you automatically agree to [Steam API Terms of Use](http://steamcommunity.com/dev/apiterms)
+__Note__: By using this library you automatically agree to [Steam API Terms of Use](https://steamcommunity.com/dev/apiterms)
 
 # What this IS and what this IS NOT
 
-`steam-tradeoffers` is a library for Node.js written in JavaScript.
+`steam-tradeoffers` is a library for Node.js and io.js written in JavaScript.
 
 `steam-tradeoffers` is not a complete solution for any of your needs.
 
@@ -172,11 +172,11 @@ A. It means that `node-steam` at least once failed to get cookies from Steam. Mo
 
 ### Q. I get some strange errors, 401, 403, etc.
 
-A. In some cases 401 error means your cookies are no longer valid, you need to get new cookies from Steam. In `node-steam` try to do `.webLogOn` again and re-setup trade offers.
+A. In some cases 401 error means your cookies are no longer valid, you need to get new cookies from Steam. In `node-steam` try to do `.webLogOn` again and re-setup trade offers. If you get 403 in Steam WebAPI methods, try to [regenerate your Web API key](https://steamcommunity.com/dev/apikey).
 
 ### Q. I don't see my question answered here. Can I email you or add you on Steam?
 
-A. No. Feel free to open an issue, but try search first.
+A. Please no. Please [open an issue](https://github.com/Alex7Kom/node-steam-tradeoffers/issues) instead. Always try search first!
 
 # How to contribute
 
@@ -186,7 +186,7 @@ I appreciate your time and efforts you put in your pull requests, but please fol
 
   2. If you did some research, that is great! However, please do not put the results in the code right away, create an issue.
 
-  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission, update README accordingly, and squash all your changes using `git rebase -i` into one commit. __Always__ do only one pull request per bug/feature. 
+  3. If after all you decided that you really need to push your code, please follow the existing code formatting, do not change any interfaces without need, use common sense when adding features so they won't break the existing functionality, test your code prior to submission and update README accordingly. __Always__ do only one pull request per bug/feature. 
 
 I reserve the right to close any pull request and/or rewrite your feature or fix myself. Please note that reviewing and testing your code also takes time so your changes won't be merged immediately after submission.
 
