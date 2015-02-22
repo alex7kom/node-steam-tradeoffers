@@ -14,6 +14,6 @@
   "dependencies": {
     "cheerio": "*",
     "long": "*",
-    "request": "^2.48.0"
+    "request": "*"
   }
 }
