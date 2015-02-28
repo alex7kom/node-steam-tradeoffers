@@ -301,6 +301,14 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
   });
 };
 
+SteamTradeOffers.prototype.getSummary = function(options, callback) {
+  doAPICall.bind(this)({
+    method: 'GetTradeOffersSummary/v1',
+    params: options,
+    callback: callback
+  });
+};
+
 SteamTradeOffers.prototype.declineOffer = function(options, callback) {
   doAPICall.bind(this)({method: 'DeclineTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
 };
