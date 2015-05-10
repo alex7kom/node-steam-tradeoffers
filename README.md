@@ -144,6 +144,14 @@ The second argument to `callback` will be an object with response from Steam, bu
 
 The second argument to `callback` will be the offer token of the bot, extracted from its trade offer URL.
 
+## getItems(options, callback)
+
+Options:
+
+* `tradeId` is the ID of the completed trade you want to get items for, available as a `tradeid` property on offers from `getOffers` or `getOffer`
+
+The second argument to `callback` will be an array of items acquired in a completed trade.
+
 # FAQ
 
 Please read this list of common issues before creating an issue.
