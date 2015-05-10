@@ -441,3 +441,38 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     }
   }.bind(this));
 };
+
+SteamTradeOffers.prototype.getItems = function(options, callback) {
+  // Borrowed from node-steam-trade (https://github.com/seishun/node-steam-trade/blob/master/index.js#L86-L119)
+  this._request.get('http://steamcommunity.com/trade/' + options.tradeId + '/receipt/', function(err, response, body) {
+    if(err || response.statusCode != 200) {
+      callback(err || new Error(response.statusCode));
+      return;
+    }
+    
+    var script = body.match(/(var oItem;[\s\S]*)<\/script>/);
+    if (!script) {
+      // no session
+      callback(new Error('No session'));
+      return;
+    }
+    
+    var items = [];
+    
+    // prepare to execute the script in the page
+    var UserYou;
+    function BuildHover(str, item) {
+      items.push(item);
+    }
+    function $() {
+      return {
+        show: function() {}
+      };
+    }
+    
+    // evil magic happens here
+    eval(script[1]);
+    
+    callback(null, items);
+  });
+};
