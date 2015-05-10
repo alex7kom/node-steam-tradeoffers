@@ -117,7 +117,7 @@ function getAPIKey(callback) {
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
   this._request.get({
-    uri: 'https://steamcommunity.com/id/me/tradeoffers/privacy'
+    uri: 'https://steamcommunity.com/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode != 200) {
       this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
