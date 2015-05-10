@@ -1,6 +1,6 @@
 {
   "name": "steam-tradeoffers",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Allows you to automate Steam trading using trade offers in Node.js",
   "author": "Alexey Komarov <alex7kom@gmail.com>",
   "license": "MIT",
