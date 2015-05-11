@@ -1,22 +1,12 @@
 # Steam Trade Offers for Node.js and io.js
 
-_Please_ read the [FAQ](#faq) before creating any issue and [How to contribute](#how-to-contribute) section before creating any pull request.
-
-Allows you to automate Steam trading using trade offers in Node.js. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
+`steam-tradeoffers` is a library for Node.js and io.js written in JavaScript. It allows you to automate Steam trading using trade offers. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
 
 __Note__: By using this library you automatically agree to [Steam API Terms of Use](https://steamcommunity.com/dev/apiterms)
 
-# What this IS and what this IS NOT
+__Read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ)__ if you have any questions and [How to contribute](#how-to-contribute) section before creating any pull request.
 
-`steam-tradeoffers` is a library for Node.js and io.js written in JavaScript.
-
-`steam-tradeoffers` is not a complete solution for any of your needs.
-
-To use `steam-tradeoffers` you need to know how to code in JavaScript.
-
-The examples are NOT templates for your bot.
-
-If you don't understand the code in the examples, the library is probably not for you.
+If your question is not answered here, __please [open an issue](https://github.com/Alex7Kom/node-steam-tradeoffers/issues)__.
 
 # Installation
 
@@ -50,7 +40,7 @@ The `offerbot.js` is an example of making a trade offer.
 
 On first launch both of the examples will 'crash' with error code `63`. Check your email for Steam Guard code and edit an example file to add it, the run it again.
 
-Please read the [FAQ](#faq) before creating an issue about examples.
+Please read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ) before creating an issue about examples.
 
 # Methods
 
@@ -151,40 +141,6 @@ Options:
 * `tradeId` is the ID of the completed trade you want to get items for, available as a `tradeid` property on offers from `getOffers` or `getOffer`
 
 The second argument to `callback` will be an array of items acquired in a completed trade.
-
-# FAQ
-
-Please read this list of common issues before creating an issue.
-
-### Q. I get `Access Denied` error when I start my bot.
-
-A. In most cases `Access Denied` error means that your account is limited. See [Steam Support article about limited accounts](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
-
-### Q. I can't login to my account.
-
-A. Double check that your account credentials and Steam Guard code are correct. This is never a problem of `steam-tradeoffers`. Examples here use [node-steam](https://github.com/seishun/node-steam) library to do Steam login.
-
-### Q. I can't make/accept/etc. trade offers.
-
-A. There are two major possible cases:
-
-* Your params are incorrect and/or items are not tradable.
-
-* Your account can't trade which is normal for all new logins. Wait for 1-2 weeks, do not remove `sentry` file. There are also some rare cases when even old enough logins can't trade. That means you are very unlucky. Remove `sentry` file and login again. Blame Steam.
-
-There are also some cases when Steam fails to send a trade offer due to its internal reasons, or returns errors even in cases of success. You know, blame Steam.
-
-### Q. What does `Web authentication 401, retrying` message mean?
-
-A. It means that `node-steam` at least once failed to get cookies from Steam. Most of the time you can safely ignore it.
-
-### Q. I get some strange errors, 401, 403, etc.
-
-A. In some cases 401 error means your cookies are no longer valid, you need to get new cookies from Steam. In `node-steam` try to do `.webLogOn` again and re-setup trade offers. If you get 403 in Steam WebAPI methods, try to [regenerate your Web API key](https://steamcommunity.com/dev/apikey).
-
-### Q. I don't see my question answered here. Can I email you or add you on Steam?
-
-A. Please no. Please [open an issue](https://github.com/Alex7Kom/node-steam-tradeoffers/issues) instead. Always try search first!
 
 # How to contribute
 
