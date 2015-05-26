@@ -103,11 +103,14 @@ function getAPIKey(callback) {
       return;
     }
 
+    this.emit('debug', 'registering apikey');
     this._request.post({
       uri: 'https://steamcommunity.com/dev/registerkey',
       form: {
         domain: 'localhost',
-        agreeToTerms: 1
+        agreeToTerms: 'agreed',
+        sessionid: this.sessionID,
+        submit: 'Register'
       }
     }, function(error, response, body) {
       getAPIKey.bind(this)(callback);
