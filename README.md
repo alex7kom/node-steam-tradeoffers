@@ -6,7 +6,7 @@ __Note__: By using this library you automatically agree to [Steam API Terms of U
 
 __Read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ)__ if you have any questions and [How to contribute](#how-to-contribute) section before creating any pull request.
 
-If your question is not answered here, __please [open an issue](https://github.com/Alex7Kom/node-steam-tradeoffers/issues)__.
+If your question is not answered here, please ask it in [https://github.com/steam-forward/node-steam-forum](https://github.com/steam-forward/node-steam-forum), __do not open an issue here__. Issues are only for bugs and feature requests.
 
 # Installation
 
