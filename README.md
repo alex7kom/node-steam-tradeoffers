@@ -75,7 +75,8 @@ Loads your partner inventory for the given app and context.
 
 Options:
 
-* `partnerSteamId` is the SteamID of the trade partner
+* `partnerSteamId` is the SteamID of the trade partner.  You need specify only `partnerAccountId` or `partnerSteamId`.
+* `partnerAccountId` is the Steam Account ID of the trade partner. You need specify only `partnerAccountId` or `partnerSteamId`.
 * `appId` is the Steam AppID
 * `contextId` is the inventory context Id
 * `tradeOfferId` (optional) is needed to load private inventory of the trade partner for received trade offer

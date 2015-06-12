@@ -193,7 +193,7 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
 SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
   var form = {
     sessionid: this.sessionID,
-    partner: options.partnerSteamId,
+    partner: options.partnerSteamId || toSteamId(options.partnerAccountId),
     appid: options.appId,
     contextid: options.contextId
   };
@@ -212,7 +212,7 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
   this._loadInventory([], uri, {
     json: true,
     headers: {
-      referer: 'https://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(options.partnerSteamId)
+      referer: 'https://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(form.partner)
     }
   }, options.contextId, null, callback);
 };
