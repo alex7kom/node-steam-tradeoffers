@@ -155,6 +155,10 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
       this.emit('debug', 'loading inventory: ' + (error || response.statusCode != 200));
       return callback(error || new Error(response.statusCode));
     }
+    if (body && !body.success){
+      this.emit('debug', 'loading inventory: error: ' + body.error);
+      return callback(new Error('Error: ' + JSON.stringify(body.error)));
+    }
     if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
       this.emit('debug', 'loading inventory: invalid response');
       return callback(new Error('Invalid Response'));
