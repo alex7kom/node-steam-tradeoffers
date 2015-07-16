@@ -152,7 +152,7 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
 
   this._request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      this.emit('debug', 'loading inventory: ' + (error || response.statusCode != 200));
+      this.emit('debug', 'loading inventory: ' + (error || body.error || response.statusCode != 200));
       return callback(error || new Error(response.statusCode));
     }
     if (body && !body.success){
