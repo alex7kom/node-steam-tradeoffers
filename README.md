@@ -55,7 +55,6 @@ Options:
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
 * `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
 * `APIKey` is a Web API key for the account you use to trade. API key of another account won't work.
-* `PIN` is a Family View PIN, required if account uses Family View.
 
 ## loadMyInventory(options, callback)
 
