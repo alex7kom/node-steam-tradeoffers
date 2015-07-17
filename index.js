@@ -24,7 +24,9 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
     setCookie.bind(this)(name);
   }.bind(this));
 
-  callback();
+  if (typeof callback === 'function') {
+    callback();
+  }
 };
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
