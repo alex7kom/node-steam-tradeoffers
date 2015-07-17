@@ -2,8 +2,6 @@
 
 `steam-tradeoffers` is a library for Node.js and io.js written in JavaScript. It allows you to automate Steam trading using trade offers. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
 
-__Note__: By using this library you automatically agree to [Steam API Terms of Use](https://steamcommunity.com/dev/apiterms)
-
 __Read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ)__ if you have any questions and [How to contribute](#how-to-contribute) section before creating any pull request.
 
 If your question is not answered here, please ask it in [https://github.com/steam-forward/node-steam-forum](https://github.com/steam-forward/node-steam-forum), __do not open an issue here__. Issues are only for bugs and feature requests.
@@ -25,10 +23,12 @@ var offers = new SteamTradeOffers();
 ...then setup session:
 
 ```js
-offers.setup({ sessionID: sessionID, webCookie: cookies });
+offers.setup({
+  sessionID: sessionID,
+  webCookie: cookies,
+  APIKey: webAPIKey
+});
 ```
-
-This setup will automatically register and retrieve Steam API key for you.
 
 # Examples
 
@@ -48,15 +48,14 @@ The first param for all methods is an object. The second param is callback. All 
 
 ## setup(options[, callback])
 
-As noted above, this method is used to setup a web session. It also tries to retrieve Web API key. If you want to operate with trade offers right after startup, do it in callback of this method.
+As noted above, this method is used to setup a web session. If you want to operate with trade offers right after startup, do it in callback of this method.
 
 Options:
 
 * `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
 * `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
+* `APIKey` is a Web API key for the account you use to trade. API key of another account won't work.
 * `PIN` is a Family View PIN, required if account uses Family View.
-
-If failed to retrieve Web API key due to [limited account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663), `setup` will return `Access Denied` error in callback, or (if no callback provided) will throw the error.
 
 ## loadMyInventory(options, callback)
 

@@ -16,6 +16,8 @@ function SteamTradeOffers() {
 }
 
 SteamTradeOffers.prototype.setup = function(options, callback) {
+  this.APIKey = options.APIKey;
+
   this.sessionID = options.sessionID;
 
   options.webCookie.forEach(function(name) {
@@ -31,10 +33,10 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
           throw error;
         }
       }
-      getAPIKey.bind(this)(callback);
+      callback();
     }.bind(this));
   }
-  getAPIKey.bind(this)(callback);
+  callback();
 };
 
 function parentalUnlock(PIN, callback) {
@@ -62,59 +64,6 @@ function parentalUnlock(PIN, callback) {
     }
 
     callback();
-  }.bind(this));
-}
-
-function getAPIKey(callback) {
-  if (this.APIKey) {
-    if (typeof callback == 'function') {
-      callback();
-    }
-    return;
-  }
-  this._request.get({
-    uri: 'https://steamcommunity.com/dev/apikey'
-  }, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      this.emit('debug', 'retrieving apikey: ' + (error || response.statusCode));
-      if (typeof callback == 'function') {
-        callback(error || new Error(response.statusCode));
-      }
-      return;
-    }
-
-    var $ = cheerio.load(body);
-
-    if ($('#mainContents h2').html() == 'Access Denied') {
-      this.emit('debug', 'retrieving apikey: access denied (probably limited account)');
-      var accessError = new Error('Access Denied');
-      if (typeof callback == 'function') {
-        return callback(accessError);
-      } else {
-        throw accessError;
-      }
-    }
-    if ($('#bodyContents_ex h2').html() == 'Your Steam Web API Key') {
-      var key = $('#bodyContents_ex p').html().split(' ')[1];
-      this.APIKey = key;
-      if (typeof callback == 'function') {
-        callback();
-      }
-      return;
-    }
-
-    this.emit('debug', 'registering apikey');
-    this._request.post({
-      uri: 'https://steamcommunity.com/dev/registerkey',
-      form: {
-        domain: 'localhost',
-        agreeToTerms: 'agreed',
-        sessionid: this.sessionID,
-        submit: 'Register'
-      }
-    }, function(error, response, body) {
-      getAPIKey.bind(this)(callback);
-    }.bind(this));
   }.bind(this));
 }
 
