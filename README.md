@@ -32,13 +32,13 @@ offers.setup({
 
 # Examples
 
-You'll need to install [node-steam](https://github.com/seishun/node-steam) in order to run the examples.
+You'll need to install [node-steam](https://github.com/seishun/node-steam), [steam-weblogon](https://github.com/Alex7Kom/node-steam-weblogon), and [steam-web-api-key](https://github.com/Alex7Kom/node-steam-web-api-key) in order to run the examples.
 
-The `storehouse.js` file contains an example of handling incoming trade offers. 
+The `storehouse.js` file contains an example of handling incoming trade offers.
 
 The `offerbot.js` is an example of making a trade offer.
 
-On first launch both of the examples will 'crash' with error code `63`. Check your email for Steam Guard code and edit an example file to add it, then run it again.
+On first launch both of the examples will 'crash'. Check your email for Steam Guard code and edit an example file to add it, then run it again.
 
 Please read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ) before creating an issue about examples.
 
