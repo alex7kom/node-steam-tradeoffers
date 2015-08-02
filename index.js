@@ -4,6 +4,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Long = require('long');
 var url = require('url');
+var vm = require('vm');
 var querystring = require('querystring');
 
 require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
@@ -377,7 +378,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getItems = function(options, callback) {
-  // Borrowed from node-steam-trade
+  // Derived from node-steam-trade
   // https://github.com/seishun/node-steam-trade/blob/master/index.js#L86-L119
   this._request.get({
     uri: 'https://steamcommunity.com/trade/' + options.tradeId + '/receipt/'
@@ -393,22 +394,24 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
       return callback(new Error('No session'));
     }
 
-    var items = [];
+    var sandbox = {
+      items: []
+    };
 
-    // prepare to execute the script in the page
-    var UserYou;
-    function BuildHover(str, item) {
-      items.push(item);
-    }
-    function $() {
-      return {
-        show: function() {}
-      };
-    }
+    // prepare to execute the script in new context
+    var code = 'var UserYou;'
+      + 'function BuildHover(str, item) {'
+      +   'items.push(item);'
+      + '}'
+      + 'function $() {'
+      +   'return {'
+      +     'show: function() {}'
+      +   '};'
+      + '}'
+      + script[1];
 
-    // evil magic happens here
-    eval(script[1]);
+    vm.runInNewContext(code, sandbox);
 
-    callback(null, items);
+    callback(null, sandbox.items);
   });
 };
