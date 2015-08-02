@@ -16,10 +16,10 @@ var logOnOptions = {
 var authCode = ''; // code received by email
 
 try {
-  logOnOptions['sha_sentryfile'] = getSHA1(fs.readFileSync('sentry'));
+  logOnOptions.sha_sentryfile = getSHA1(fs.readFileSync('sentry'));
 } catch (e) {
-  if (authCode != '') {
-    logOnOptions['auth_code'] = authCode;
+  if (authCode !== '') {
+    logOnOptions.auth_code = authCode;
   }
 }
 
@@ -40,11 +40,11 @@ steamClient.on('connected', function() {
 });
 
 steamClient.on('logOnResponse', function(logonResp) {
-  if (logonResp.eresult == Steam.EResult.OK) {
+  if (logonResp.eresult === Steam.EResult.OK) {
     console.log('Logged in!');
     steamFriends.setPersonaState(Steam.EPersonaState.Online);
 
-    steamWebLogOn.webLogOn(function(sessionID, newCookie){
+    steamWebLogOn.webLogOn(function(sessionID, newCookie) {
       getSteamAPIKey({
         sessionID: sessionID,
         webCookie: newCookie
@@ -68,25 +68,33 @@ steamUser.on('updateMachineAuth', function(sentry, callback) {
   callback({ sha_file: getSHA1(sentry.bytes) });
 });
 
+function handleOffers() {
+  offers.getOffers({
+    get_received_offers: 1,
+    active_only: 1,
+    time_historical_cutoff: Math.round(Date.now() / 1000)
+  }, function(error, body) {
+    if (
+      body
+      && body.response
+      && body.response.trade_offers_received
+    ) {
+      body.response.trade_offers_received.forEach(function(offer) {
+        if (offer.trade_offer_state === 2) {
+          if (offer.steamid_other === admin) {
+            offers.acceptOffer({tradeOfferId: offer.tradeofferid});
+          } else {
+            offers.declineOffer({tradeOfferId: offer.tradeofferid});
+          }
+        }
+      });
+    }
+  });
+}
+
 steamUser.on('tradeOffers', function(number) {
   if (number > 0) {
-    offers.getOffers({
-      get_received_offers: 1,
-      active_only: 1,
-      time_historical_cutoff: Math.round(Date.now() / 1000)
-    }, function(error, body) {
-      if(body.response.trade_offers_received){
-        body.response.trade_offers_received.forEach(function(offer) {
-          if (offer.trade_offer_state == 2){
-            if(offer.steamid_other == admin) {
-              offers.acceptOffer({tradeOfferId: offer.tradeofferid});
-            } else {
-              offers.declineOffer({tradeOfferId: offer.tradeofferid});
-            }
-          }
-        });
-      }
-    });
+    handleOffers();
   }
 });
 

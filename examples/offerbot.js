@@ -16,10 +16,10 @@ var logOnOptions = {
 var authCode = ''; // code received by email
 
 try {
-  logOnOptions['sha_sentryfile'] = getSHA1(fs.readFileSync('sentry'));
+  logOnOptions.sha_sentryfile = getSHA1(fs.readFileSync('sentry'));
 } catch (e) {
-  if (authCode != '') {
-    logOnOptions['auth_code'] = authCode;
+  if (authCode !== '') {
+    logOnOptions.auth_code = authCode;
   }
 }
 
@@ -39,12 +39,49 @@ steamClient.on('connected', function() {
   steamUser.logOn(logOnOptions);
 });
 
+function offerItems() {
+  offers.loadMyInventory({
+    appId: 440,
+    contextId: 2
+  }, function(err, items) {
+    var item;
+    // picking first tradable item
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].tradable) {
+        item = items[i];
+        break;
+      }
+    }
+    // if there is such an item, making an offer with it
+    if (item) {
+      offers.makeOffer ({
+        partnerSteamId: admin,
+        itemsFromMe: [
+          {
+            appid: 440,
+            contextid: 2,
+            amount: 1,
+            assetid: item.id
+          }
+        ],
+        itemsFromThem: [],
+        message: 'This is test'
+      }, function(err, response) {
+        if (err) {
+          throw err;
+        }
+        console.log(response);
+      });
+    }
+  });
+}
+
 steamClient.on('logOnResponse', function(logonResp) {
-  if (logonResp.eresult == Steam.EResult.OK) {
+  if (logonResp.eresult === Steam.EResult.OK) {
     console.log('Logged in!');
     steamFriends.setPersonaState(Steam.EPersonaState.Online);
 
-    steamWebLogOn.webLogOn(function(sessionID, newCookie){
+    steamWebLogOn.webLogOn(function(sessionID, newCookie) {
       getSteamAPIKey({
         sessionID: sessionID,
         webCookie: newCookie
@@ -54,40 +91,7 @@ steamClient.on('logOnResponse', function(logonResp) {
           webCookie: newCookie,
           APIKey: APIKey
         }, function() {
-          offers.loadMyInventory({
-            appId: 440,
-            contextId: 2
-          }, function(err, items) {
-            var item;
-            // picking first tradable item
-            for (var i = 0; i < items.length; i++) {
-              if (items[i].tradable) {
-                item = items[i];
-                break;
-              }
-            }
-            // if there is such an item, making an offer with it
-            if (item) {
-              offers.makeOffer ({
-                partnerSteamId: admin,
-                itemsFromMe: [
-                  {
-                    appid: 440,
-                    contextid: 2,
-                    amount: 1,
-                    assetid: item.id
-                  }
-                ],
-                itemsFromThem: [],
-                message: 'This is test'
-              }, function(err, response){
-                if (err) {
-                  throw err;
-                }
-                console.log(response);
-              });
-            }
-          });
+          offerItems();
         });
       });
     });

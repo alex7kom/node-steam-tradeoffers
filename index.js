@@ -133,7 +133,9 @@ function mergeWithDescriptions(items, descriptions, contextid) {
     var item = items[id];
     var description = descriptions[item.classid + '_' + (item.instanceid || '0')];
     for (var key in description) {
-      item[key] = description[key];
+      if (description.hasOwnProperty(key)) {
+        item[key] = description[key];
+      }
     }
     // add contextid because Steam is retarded
     item.contextid = contextid;
@@ -153,21 +155,21 @@ function doAPICall(options) {
   }
 
   request(params, function(error, response, body) {
-    if (error || response.statusCode != 200) {
+    if (error || response.statusCode !== 200) {
       this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
-      if (typeof options.callback == 'function') {
+      if (typeof options.callback === 'function') {
         options.callback(error || new Error(response.statusCode));
       }
       return;
     }
-    if (!body || typeof body != 'object') {
+    if (!body || typeof body !== 'object') {
       this.emit('debug', 'doing API call ' + options.method + ': invalid response');
-      if (typeof options.callback == 'function') {
+      if (typeof options.callback === 'function') {
         options.callback(new Error('Invalid Response'));
       }
       return;
     }
-    if (typeof options.callback == 'function') {
+    if (typeof options.callback === 'function') {
       options.callback(null, body);
     }
   }.bind(this));
@@ -228,16 +230,30 @@ SteamTradeOffers.prototype.getSummary = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.declineOffer = function(options, callback) {
-  doAPICall.bind(this)({method: 'DeclineTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
+  doAPICall.bind(this)({
+    method: 'DeclineTradeOffer/v1',
+    params: {
+      tradeofferid: options.tradeOfferId
+    },
+    post: true,
+    callback: callback
+  });
 };
 
 SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
-  doAPICall.bind(this)({method: 'CancelTradeOffer/v1', params: {tradeofferid: options.tradeOfferId}, post: true, callback: callback});
+  doAPICall.bind(this)({
+    method: 'CancelTradeOffer/v1',
+    params: {
+      tradeofferid: options.tradeOfferId
+    },
+    post: true,
+    callback: callback
+  });
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
   if (options.tradeOfferId === undefined) {
-    if (typeof callback == 'function') {
+    if (typeof callback === 'function') {
       callback(new Error('No options'));
     }
     return;
@@ -257,27 +273,27 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
   }, function(error, response, body) {
     if (error) {
       this.emit('debug', 'accepting offer: ' + error);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
       this.emit('debug', 'accepting offer: ' + body.strError);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode != 200) {
       this.emit('debug', 'accepting offer: ' + response.statusCode);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
       return;
     }
 
-    if (typeof callback == 'function') {
+    if (typeof callback === 'function') {
       callback(null, body);
     }
   }.bind(this));
@@ -334,27 +350,27 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   }, function(error, response, body) {
     if (error) {
       this.emit('debug', 'making an offer: ' + error);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
       this.emit('debug', 'making an offer: ' + body.strError);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode != 200) {
       this.emit('debug', 'making an offer: ' + response.statusCode);
-      if (typeof callback == 'function') {
+      if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
       return;
     }
 
-    if (typeof callback == 'function') {
+    if (typeof callback === 'function') {
       callback(null, body);
     }
   }.bind(this));
@@ -366,17 +382,15 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
   this._request.get({
     uri: 'https://steamcommunity.com/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
-    if (err || response.statusCode != 200) {
+    if (err || response.statusCode !== 200) {
       this.emit('debug', 'get items: ' + (err || response.statusCode));
-      callback(err || new Error(response.statusCode));
-      return;
+      return callback(err || new Error(response.statusCode));
     }
 
     var script = body.match(/(var oItem;[\s\S]*)<\/script>/);
     if (!script) {
       this.emit('debug', 'get items: no session');
-      callback(new Error('No session'));
-      return;
+      return callback(new Error('No session'));
     }
 
     var items = [];
