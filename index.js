@@ -34,7 +34,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
   this._request.get({
     uri: 'https://steamcommunity.com/my/tradeoffers/privacy'
   }, function(error, response, body) {
-    if (error || response.statusCode != 200) {
+    if (error || response.statusCode !== 200) {
       this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
       return callback(error || new Error(response.statusCode));
     }
@@ -63,8 +63,8 @@ SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, co
   }
 
   this._request.get(options, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      this.emit('debug', 'loading inventory: ' + (error || response.statusCode != 200));
+    if (error || response.statusCode !== 200) {
+      this.emit('debug', 'loading inventory: ' + (error || response.statusCode !== 200));
       return callback(error || new Error(response.statusCode));
     }
     if (body && !body.success){
@@ -286,7 +286,7 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
       }
       return;
     }
-    if (response.statusCode != 200) {
+    if (response.statusCode !== 200) {
       this.emit('debug', 'accepting offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
@@ -363,7 +363,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
       }
       return;
     }
-    if (response.statusCode != 200) {
+    if (response.statusCode !== 200) {
       this.emit('debug', 'making an offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
@@ -399,16 +399,16 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
     };
 
     // prepare to execute the script in new context
-    var code = 'var UserYou;'
-      + 'function BuildHover(str, item) {'
-      +   'items.push(item);'
-      + '}'
-      + 'function $() {'
-      +   'return {'
-      +     'show: function() {}'
-      +   '};'
-      + '}'
-      + script[1];
+    var code = 'var UserYou;' +
+      'function BuildHover(str, item) {' +
+        'items.push(item);' +
+      '}' +
+      'function $() {' +
+        'return {' +
+          'show: function() {}' +
+        '};' +
+      '}' +
+      script[1];
 
     vm.runInNewContext(code, sandbox);
 
