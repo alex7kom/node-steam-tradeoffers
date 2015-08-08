@@ -1,10 +1,14 @@
 # Steam Trade Offers for Node.js and io.js
 
-`steam-tradeoffers` is a library for Node.js and io.js written in JavaScript. It allows you to automate Steam trading using trade offers. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it, so you can use it separately if you can supply it with session information. Some of the methods of the library are wrappers for Steam Web API.
+[![NPM Version](https://img.shields.io/npm/v/steam-tradeoffers.svg)](https://www.npmjs.com/package/steam-tradeoffers "steam-tradeoffers on NPM")
+[![NPM Downloads](https://img.shields.io/npm/dm/steam-tradeoffers.svg)](https://www.npmjs.com/package/steam-tradeoffers "steam-tradeoffers on NPM")
+[![PayPal Donate Button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DDE8H72QKJHRJ&item_name=node%2dsteam%2dtradeoffers&currency_code=USD "Donate to this project via PayPal")
 
-__Read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ)__ first if you have any questions.
+`steam-tradeoffers` is a library for Node.js and io.js written in JavaScript. It allows you to automate Steam trading using trade offers. It was designed with [node-steam](https://github.com/seishun/node-steam) in mind, but does not depend on it directly. Some of the methods of the library are wrappers for Steam Web API.
 
-If your question is not answered here, please ask it in [https://github.com/steam-forward/node-steam-forum](https://github.com/steam-forward/node-steam-forum), __do not open an issue here__. Issues are only for bugs and feature requests.
+__Please read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FAQ)__ first if you have any questions.
+
+If your question is not answered here, please ask it in [https://github.com/steam-forward/node-steam-forum](https://github.com/steam-forward/node-steam-forum), __please do not open an issue here__. Issues are only for bugs and feature requests.
 
 # Installation
 
@@ -20,7 +24,7 @@ var SteamTradeOffers = require('steam-tradeoffers');
 var offers = new SteamTradeOffers();
 ```
 
-...then setup session:
+...then setup session and WebAPI key:
 
 ```js
 offers.setup({
@@ -29,6 +33,8 @@ offers.setup({
   APIKey: webAPIKey
 });
 ```
+
+You can obtain session information with [node-steam](https://github.com/seishun/node-steam) and its plugin [steam-weblogon](https://github.com/Alex7Kom/node-steam-weblogon).
 
 # Examples
 
