@@ -55,33 +55,47 @@ function setCookie(cookie) {
   this._j.setCookie(request.cookie(cookie), 'https://steamcommunity.com');
 }
 
-SteamTradeOffers.prototype._loadInventory = function(inventory, uri, options, contextid, start, callback) {
-  options.uri = uri;
-  
-  if (start) {
-    options.uri = options.uri + '&' + querystring.stringify({ 'start': start });
+SteamTradeOffers.prototype._loadInventory = function(options, callback) {
+  options.inventory = options.inventory || [];
+
+  var requestParams = {
+    uri: options.uri,
+    json: true
+  };
+
+  if (options.start) {
+    requestParams.uri += '&start=' + options.start;
   }
 
-  this._request.get(options, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
-      this.emit('debug', 'loading inventory: ' + (error || response.statusCode !== 200));
-      return callback(error || new Error(response.statusCode));
+  if (options.headers) {
+    requestParams.headers = options.headers;
+  }
+
+  this._request.get(requestParams, function(error, response, body) {
+    if (error) {
+      this.emit('debug', 'loading inventory: ' + error);
+      return callback(error);
     }
-    if (body && !body.success){
+    if (body && body.error) {
       this.emit('debug', 'loading inventory: error: ' + body.error);
-      return callback(new Error('Error: ' + JSON.stringify(body.error)));
+      return callback(new Error(body.error));
+    }
+    if (response.statusCode !== 200) {
+      this.emit('debug', 'loading inventory: ' + response.statusCode);
+      return callback(new Error(response.statusCode));
     }
     if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
       this.emit('debug', 'loading inventory: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
-    inventory = inventory.concat(mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextid)
-      .concat(mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextid)));
+    options.inventory = mergeInventory(options.inventory, body, options.contextId);
+
     if (body.more) {
-      this._loadInventory(inventory, uri, options, contextid, body.more_start, callback);
+      options.start = body.more_start;
+      this._loadInventory(options, callback);
     } else {
-      callback(null, inventory);
+      callback(null, options.inventory);
     }
   }.bind(this));
 };
@@ -97,9 +111,13 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
     query.trading = 1;
   }
 
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId + '/' + options.contextId + '/?' + querystring.stringify(query);
+  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId +
+    '/' + options.contextId + '/?' + querystring.stringify(query);
 
-  this._loadInventory([], uri, { json: true }, options.contextId, null, callback);
+  this._loadInventory({
+    uri: uri,
+    contextId: options.contextId
+  }, callback);
 };
 
 SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
@@ -119,15 +137,27 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
     offer = options.tradeOfferId;
   }
 
-  var uri = 'https://steamcommunity.com/tradeoffer/' + offer + '/partnerinventory/?' + querystring.stringify(form);
+  var uri = 'https://steamcommunity.com/tradeoffer/' + offer +
+    '/partnerinventory/?' + querystring.stringify(form);
 
-  this._loadInventory([], uri, {
-    json: true,
+  this._loadInventory({
+    uri: uri,
     headers: {
-      referer: 'https://steamcommunity.com/tradeoffer/' + offer + '/?partner=' + toAccountId(form.partner)
-    }
-  }, options.contextId, null, callback);
+      referer: 'https://steamcommunity.com/tradeoffer/' + offer +
+        '/?partner=' + toAccountId(form.partner)
+    },
+    contextId: options.contextId
+  }, callback);
 };
+
+function mergeInventory(inventory, body, contextId) {
+  return inventory.concat(
+    mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextId)
+      .concat(
+        mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextId)
+      )
+  );
+}
 
 function mergeWithDescriptions(items, descriptions, contextid) {
   return Object.keys(items).map(function(id) {
