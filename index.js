@@ -7,6 +7,8 @@ var url = require('url');
 var vm = require('vm');
 var querystring = require('querystring');
 
+var communityURL = 'https://steamcommunity.com';
+
 require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
 
 function SteamTradeOffers() {
@@ -32,7 +34,7 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
   this._request.get({
-    uri: 'https://steamcommunity.com/my/tradeoffers/privacy'
+    uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
       this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
@@ -51,55 +53,6 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
   }.bind(this));
 };
 
-function setCookie(cookie) {
-  this._j.setCookie(request.cookie(cookie), 'https://steamcommunity.com');
-}
-
-SteamTradeOffers.prototype._loadInventory = function(options, callback) {
-  options.inventory = options.inventory || [];
-
-  var requestParams = {
-    uri: options.uri,
-    json: true
-  };
-
-  if (options.start) {
-    requestParams.uri += '&start=' + options.start;
-  }
-
-  if (options.headers) {
-    requestParams.headers = options.headers;
-  }
-
-  this._request.get(requestParams, function(error, response, body) {
-    if (error) {
-      this.emit('debug', 'loading inventory: ' + error);
-      return callback(error);
-    }
-    if (body && body.error) {
-      this.emit('debug', 'loading inventory: error: ' + body.error);
-      return callback(new Error(body.error));
-    }
-    if (response.statusCode !== 200) {
-      this.emit('debug', 'loading inventory: ' + response.statusCode);
-      return callback(new Error(response.statusCode));
-    }
-    if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
-      this.emit('debug', 'loading inventory: invalid response');
-      return callback(new Error('Invalid Response'));
-    }
-
-    options.inventory = mergeInventory(options.inventory, body, options.contextId);
-
-    if (body.more) {
-      options.start = body.more_start;
-      this._loadInventory(options, callback);
-    } else {
-      callback(null, options.inventory);
-    }
-  }.bind(this));
-};
-
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var query = {};
 
@@ -111,10 +64,10 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
     query.trading = 1;
   }
 
-  var uri = 'https://steamcommunity.com/my/inventory/json/' + options.appId +
+  var uri = communityURL + '/my/inventory/json/' + options.appId +
     '/' + options.contextId + '/?' + querystring.stringify(query);
 
-  this._loadInventory({
+  loadInventory.bind(this)({
     uri: uri,
     contextId: options.contextId
   }, callback);
@@ -137,74 +90,18 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
     offer = options.tradeOfferId;
   }
 
-  var uri = 'https://steamcommunity.com/tradeoffer/' + offer +
+  var uri = communityURL + '/tradeoffer/' + offer +
     '/partnerinventory/?' + querystring.stringify(form);
 
-  this._loadInventory({
+  loadInventory.bind(this)({
     uri: uri,
     headers: {
-      referer: 'https://steamcommunity.com/tradeoffer/' + offer +
+      referer: communityURL + '/tradeoffer/' + offer +
         '/?partner=' + toAccountId(form.partner)
     },
     contextId: options.contextId
   }, callback);
 };
-
-function mergeInventory(inventory, body, contextId) {
-  return inventory.concat(
-    mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextId)
-      .concat(
-        mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextId)
-      )
-  );
-}
-
-function mergeWithDescriptions(items, descriptions, contextid) {
-  return Object.keys(items).map(function(id) {
-    var item = items[id];
-    var description = descriptions[item.classid + '_' + (item.instanceid || '0')];
-    for (var key in description) {
-      if (description.hasOwnProperty(key)) {
-        item[key] = description[key];
-      }
-    }
-    // add contextid because Steam is retarded
-    item.contextid = contextid;
-    return item;
-  });
-}
-
-function doAPICall(options) {
-  var params = {
-    uri: 'https://api.steampowered.com/IEconService/' + options.method + '/?key=' + this.APIKey + ((options.post) ? '' : '&' + querystring.stringify(options.params)),
-    json: true,
-    method: options.post ? 'POST' : 'GET'
-  };
-
-  if (options.post) {
-    params.form = options.params;
-  }
-
-  request(params, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
-      this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
-      if (typeof options.callback === 'function') {
-        options.callback(error || new Error(response.statusCode));
-      }
-      return;
-    }
-    if (!body || typeof body !== 'object') {
-      this.emit('debug', 'doing API call ' + options.method + ': invalid response');
-      if (typeof options.callback === 'function') {
-        options.callback(new Error('Invalid Response'));
-      }
-      return;
-    }
-    if (typeof options.callback === 'function') {
-      options.callback(null, body);
-    }
-  }.bind(this));
-}
 
 SteamTradeOffers.prototype.getOffers = function(options, callback) {
   doAPICall.bind(this)({
@@ -283,17 +180,10 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
-  if (options.tradeOfferId === undefined) {
-    if (typeof callback === 'function') {
-      callback(new Error('No options'));
-    }
-    return;
-  }
-
   this._request.post({
-    uri: 'https://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/accept',
+    uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
-      referer: 'https://steamcommunity.com/tradeoffer/' + options.tradeOfferId + '/'
+      referer: communityURL + '/tradeoffer/' + options.tradeOfferId + '/'
     },
     json: true,
     form: {
@@ -330,14 +220,6 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
   }.bind(this));
 };
 
-function toSteamId(accountId) {
-  return new Long(parseInt(accountId, 10), 0x1100001).toString();
-}
-
-function toAccountId(steamId) {
-  return Long.fromString(steamId).toInt().toString();
-}
-
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   var tradeoffer = {
     newversion: true,
@@ -359,20 +241,22 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
   };
 
   if (options.accessToken !== undefined) {
-    formFields.trade_offer_create_params = JSON.stringify({ trade_offer_access_token: options.accessToken });
+    formFields.trade_offer_create_params = JSON.stringify({
+      trade_offer_access_token: options.accessToken
+    });
     query.token = options.accessToken;
   }
-  
+
   var referer;
   if (options.counteredTradeOffer !== undefined) {
     formFields.tradeofferid_countered = options.counteredTradeOffer;
-    referer = 'https://steamcommunity.com/tradeoffer/' + options.counteredTradeOffer + '/';
+    referer = communityURL + '/tradeoffer/' + options.counteredTradeOffer + '/';
   } else {
-    referer = 'https://steamcommunity.com/tradeoffer/new/?' + querystring.stringify(query);
+    referer = communityURL + '/tradeoffer/new/?' + querystring.stringify(query);
   }
 
   this._request.post({
-    uri: 'https://steamcommunity.com/tradeoffer/new/send',
+    uri: communityURL + '/tradeoffer/new/send',
     headers: {
       referer: referer
     },
@@ -411,7 +295,7 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
   // Derived from node-steam-trade
   // https://github.com/seishun/node-steam-trade/blob/master/index.js#L86-L119
   this._request.get({
-    uri: 'https://steamcommunity.com/trade/' + options.tradeId + '/receipt/'
+    uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
     if (err || response.statusCode !== 200) {
       this.emit('debug', 'get items: ' + (err || response.statusCode));
@@ -445,3 +329,119 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
     callback(null, sandbox.items);
   });
 };
+
+function setCookie(cookie) {
+  this._j.setCookie(request.cookie(cookie), communityURL);
+}
+
+function toSteamId(accountId) {
+  return new Long(parseInt(accountId, 10), 0x1100001).toString();
+}
+
+function toAccountId(steamId) {
+  return Long.fromString(steamId).toInt().toString();
+}
+
+function mergeInventory(inventory, body, contextId) {
+  return inventory.concat(
+    mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextId)
+      .concat(
+        mergeWithDescriptions(body.rgCurrency, body.rgDescriptions, contextId)
+      )
+  );
+}
+
+function mergeWithDescriptions(items, descriptions, contextid) {
+  return Object.keys(items).map(function(id) {
+    var item = items[id];
+    var description = descriptions[item.classid + '_' + (item.instanceid || '0')];
+    for (var key in description) {
+      if (description.hasOwnProperty(key)) {
+        item[key] = description[key];
+      }
+    }
+    // add contextid because Steam is retarded
+    item.contextid = contextid;
+    return item;
+  });
+}
+
+function loadInventory(options, callback) {
+  options.inventory = options.inventory || [];
+
+  var requestParams = {
+    uri: options.uri,
+    json: true
+  };
+
+  if (options.start) {
+    requestParams.uri += '&start=' + options.start;
+  }
+
+  if (options.headers) {
+    requestParams.headers = options.headers;
+  }
+
+  this._request.get(requestParams, function(error, response, body) {
+    if (error) {
+      this.emit('debug', 'loading inventory: ' + error);
+      return callback(error);
+    }
+    if (body && body.error) {
+      this.emit('debug', 'loading inventory: error: ' + body.error);
+      return callback(new Error(body.error));
+    }
+    if (response.statusCode !== 200) {
+      this.emit('debug', 'loading inventory: ' + response.statusCode);
+      return callback(new Error(response.statusCode));
+    }
+    if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
+      this.emit('debug', 'loading inventory: invalid response');
+      return callback(new Error('Invalid Response'));
+    }
+
+    options.inventory = mergeInventory(options.inventory, body, options.contextId);
+
+    if (body.more) {
+      options.start = body.more_start;
+      loadInventory.bind(this)(options, callback);
+    } else {
+      callback(null, options.inventory);
+    }
+  }.bind(this));
+}
+
+function doAPICall(options) {
+  var httpMethod = options.post ? 'post' : 'get';
+
+  var params = {
+    uri: 'https://api.steampowered.com/IEconService/' + options.method +
+      '/?key=' + this.APIKey +
+      ((options.post) ? '' : '&' + querystring.stringify(options.params)),
+    json: true
+  };
+
+  if (options.post) {
+    params.form = options.params;
+  }
+
+  request[httpMethod](params, function(error, response, body) {
+    if (error || response.statusCode !== 200) {
+      this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
+      if (typeof options.callback === 'function') {
+        options.callback(error || new Error(response.statusCode));
+      }
+      return;
+    }
+    if (!body || typeof body !== 'object') {
+      this.emit('debug', 'doing API call ' + options.method + ': invalid response');
+      if (typeof options.callback === 'function') {
+        options.callback(new Error('Invalid Response'));
+      }
+      return;
+    }
+    if (typeof options.callback === 'function') {
+      options.callback(null, body);
+    }
+  }.bind(this));
+}
