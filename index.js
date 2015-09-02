@@ -24,8 +24,8 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
   this.sessionID = options.sessionID;
 
   options.webCookie.forEach(function(name) {
-    setCookie.bind(this)(name);
-  }.bind(this));
+    setCookie.call(this, name);
+  }, this);
 
   if (typeof callback === 'function') {
     callback();
@@ -33,15 +33,17 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
+  var self = this;
+
   this._request.get({
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
+      self.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
       return callback(error || new Error(response.statusCode));
     }
     if (!body) {
-      this.emit('debug', 'retrieving offer token: invalid response');
+      self.emit('debug', 'retrieving offer token: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
@@ -50,7 +52,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
     var offerToken = url.parse(offerUrl, true).query.token;
 
     callback(null, offerToken);
-  }.bind(this));
+  });
 };
 
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
@@ -67,7 +69,7 @@ SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var uri = communityURL + '/my/inventory/json/' + options.appId +
     '/' + options.contextId + '/?' + querystring.stringify(query);
 
-  loadInventory.bind(this)({
+  loadInventory.call(this, {
     uri: uri,
     contextId: options.contextId
   }, callback);
@@ -93,7 +95,7 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
   var uri = communityURL + '/tradeoffer/' + offer +
     '/partnerinventory/?' + querystring.stringify(form);
 
-  loadInventory.bind(this)({
+  loadInventory.call(this, {
     uri: uri,
     headers: {
       referer: communityURL + '/tradeoffer/' + offer +
@@ -104,7 +106,7 @@ SteamTradeOffers.prototype.loadPartnerInventory = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getOffers = function(options, callback) {
-  doAPICall.bind(this)({
+  doAPICall.call(this, {
     method: 'GetTradeOffers/v1',
     params: options,
     callback: function(error, res) {
@@ -132,7 +134,7 @@ SteamTradeOffers.prototype.getOffers = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getOffer = function(options, callback) {
-  doAPICall.bind(this)({
+  doAPICall.call(this, {
     method: 'GetTradeOffer/v1',
     params: options,
     callback: function(error, res) {
@@ -150,7 +152,7 @@ SteamTradeOffers.prototype.getOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getSummary = function(options, callback) {
-  doAPICall.bind(this)({
+  doAPICall.call(this, {
     method: 'GetTradeOffersSummary/v1',
     params: options,
     callback: callback
@@ -158,7 +160,7 @@ SteamTradeOffers.prototype.getSummary = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.declineOffer = function(options, callback) {
-  doAPICall.bind(this)({
+  doAPICall.call(this, {
     method: 'DeclineTradeOffer/v1',
     params: {
       tradeofferid: options.tradeOfferId
@@ -169,7 +171,7 @@ SteamTradeOffers.prototype.declineOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
-  doAPICall.bind(this)({
+  doAPICall.call(this, {
     method: 'CancelTradeOffer/v1',
     params: {
       tradeofferid: options.tradeOfferId
@@ -180,6 +182,8 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
+  var self = this;
+
   this._request.post({
     uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
@@ -193,21 +197,21 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     }
   }, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'accepting offer: ' + error);
+      self.emit('debug', 'accepting offer: ' + error);
       if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
-      this.emit('debug', 'accepting offer: ' + body.strError);
+      self.emit('debug', 'accepting offer: ' + body.strError);
       if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'accepting offer: ' + response.statusCode);
+      self.emit('debug', 'accepting offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
@@ -217,7 +221,7 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     if (typeof callback === 'function') {
       callback(null, body);
     }
-  }.bind(this));
+  });
 };
 
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
@@ -240,6 +244,9 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     partner: options.partnerAccountId || toAccountId(options.partnerSteamId)
   };
 
+  var self = this;
+  var referer;
+
   if (options.accessToken !== undefined) {
     formFields.trade_offer_create_params = JSON.stringify({
       trade_offer_access_token: options.accessToken
@@ -247,7 +254,6 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     query.token = options.accessToken;
   }
 
-  var referer;
   if (options.counteredTradeOffer !== undefined) {
     formFields.tradeofferid_countered = options.counteredTradeOffer;
     referer = communityURL + '/tradeoffer/' + options.counteredTradeOffer + '/';
@@ -264,21 +270,21 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     form: formFields
   }, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'making an offer: ' + error);
+      self.emit('debug', 'making an offer: ' + error);
       if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
-      this.emit('debug', 'making an offer: ' + body.strError);
+      self.emit('debug', 'making an offer: ' + body.strError);
       if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'making an offer: ' + response.statusCode);
+      self.emit('debug', 'making an offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
@@ -288,7 +294,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     if (typeof callback === 'function') {
       callback(null, body);
     }
-  }.bind(this));
+  });
 };
 
 SteamTradeOffers.prototype.getItems = function(options, callback) {
@@ -374,6 +380,8 @@ function loadInventory(options, callback) {
     json: true
   };
 
+  var self = this;
+
   if (options.start) {
     requestParams.uri += '&start=' + options.start;
   }
@@ -384,19 +392,19 @@ function loadInventory(options, callback) {
 
   this._request.get(requestParams, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'loading inventory: ' + error);
+      self.emit('debug', 'loading inventory: ' + error);
       return callback(error);
     }
     if (body && body.error) {
-      this.emit('debug', 'loading inventory: error: ' + body.error);
+      self.emit('debug', 'loading inventory: error: ' + body.error);
       return callback(new Error(body.error));
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'loading inventory: ' + response.statusCode);
+      self.emit('debug', 'loading inventory: ' + response.statusCode);
       return callback(new Error(response.statusCode));
     }
     if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
-      this.emit('debug', 'loading inventory: invalid response');
+      self.emit('debug', 'loading inventory: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
@@ -404,11 +412,11 @@ function loadInventory(options, callback) {
 
     if (body.more) {
       options.start = body.more_start;
-      loadInventory.bind(this)(options, callback);
+      loadInventory.call(self, options, callback);
     } else {
       callback(null, options.inventory);
     }
-  }.bind(this));
+  });
 }
 
 function doAPICall(options) {
@@ -421,20 +429,22 @@ function doAPICall(options) {
     json: true
   };
 
+  var self = this;
+
   if (options.post) {
     params.form = options.params;
   }
 
   request[httpMethod](params, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
+      self.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
       if (typeof options.callback === 'function') {
         options.callback(error || new Error(response.statusCode));
       }
       return;
     }
     if (!body || typeof body !== 'object') {
-      this.emit('debug', 'doing API call ' + options.method + ': invalid response');
+      self.emit('debug', 'doing API call ' + options.method + ': invalid response');
       if (typeof options.callback === 'function') {
         options.callback(new Error('Invalid Response'));
       }
@@ -443,5 +453,5 @@ function doAPICall(options) {
     if (typeof options.callback === 'function') {
       options.callback(null, body);
     }
-  }.bind(this));
+  });
 }
