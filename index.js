@@ -33,6 +33,17 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
+  this.getOfferUrl(function(error, offerUrl) {
+    if (error) {
+      return callback(error);
+    }
+
+    var offerToken = url.parse(offerUrl, true).query.token;
+    callback(null, offerToken);
+  });
+};
+
+SteamTradeOffers.prototype.getOfferUrl = function(callback) {
   this._request.get({
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
@@ -47,9 +58,8 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
 
     var $ = cheerio.load(body);
     var offerUrl = $('input#trade_offer_access_url').val();
-    var offerToken = url.parse(offerUrl, true).query.token;
 
-    callback(null, offerToken);
+    callback(null, offerUrl);
   }.bind(this));
 };
 
