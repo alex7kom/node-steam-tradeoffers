@@ -154,6 +154,21 @@ Options:
 
 The second argument to `callback` will be an array of items acquired in a completed trade.
 
+## getHoldDuration(options, callback)
+
+Get escrow hold duration for yourself and your trade partner.
+
+Options:
+
+* `partnerAccountId` or `partnerSteamId`, you need only one of those.
+* `accessToken` (optional) is a token from the public Trade URL of the partner.
+
+The second argument to `callback` will be an object like:
+
+```json
+{ my: 0, their: 0 }
+```
+
 # License
 
 The MIT License (MIT)

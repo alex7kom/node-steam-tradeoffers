@@ -53,6 +53,63 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
   }.bind(this));
 };
 
+SteamTradeOffers.prototype.getHoldDuration = function(options, callback) {
+  var query = {
+    partner: options.partnerAccountId || toAccountId(options.partnerSteamId)
+  };
+
+  if (options.accessToken) {
+    query.token = options.accessToken;
+  }
+
+  var path = '/tradeoffer/new/?' + querystring.stringify(query);
+
+  this._request.get({
+    uri: communityURL + path
+  }, function(error, response, body) {
+    if (error || response.statusCode !== 200) {
+      this.emit('debug', 'retrieving hold duration: ' + (error || response.statusCode));
+      return callback(error || new Error(response.statusCode));
+    }
+    if (!body) {
+      this.emit('debug', 'retrieving hold duration: invalid response');
+      return callback(new Error('Invalid Response'));
+    }
+
+    var $ = cheerio.load(body);
+    var scriptToExec = '';
+    var status = $('script').get().some(function (script) {
+      if (!script.children[0]) {
+        return false;
+      }
+      var text = script.children[0].data;
+      if (/var g_daysMyEscrow/.test(text)) {
+        scriptToExec = text;
+        return true;
+      }
+      return false;
+    });
+
+    if (!status) {
+      this.emit('debug', 'retrieving hold duration: can\'t get hold duration');
+      return callback(new Error('Can\'t get hold duration'));
+    }
+
+    var sandbox = {
+      data: {}
+    };
+
+    // prepare to execute the script in new context
+    var code = scriptToExec + 
+      'data.my = g_daysMyEscrow;' +
+      'data.their = g_daysTheirEscrow;';
+
+    vm.runInNewContext(code, sandbox);
+
+    callback(null, sandbox.data);
+  }.bind(this));
+};
+
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var query = {};
 
