@@ -169,6 +169,23 @@ The second argument to `callback` will be an object like:
 { my: 0, their: 0 }
 ```
 
+## getPrivacySettings(callback)
+
+Get privacy settings for yourself
+
+The second argument to `callback` will be an object like:
+
+```js
+{
+  privacySetting: "public",
+  commentSetting: "commentfriendsonly",
+  inventoryPrivacySetting: "public",
+  tradeConfirmationSetting: "disabled",
+  marketConfirmationSetting: "disabled",
+  inventoryGiftPrivacy: true
+}
+```
+
 # License
 
 The MIT License (MIT)

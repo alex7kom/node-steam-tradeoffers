@@ -110,6 +110,39 @@ SteamTradeOffers.prototype.getHoldDuration = function(options, callback) {
   }.bind(this));
 };
 
+SteamTradeOffers.prototype.getPrivacySettings = function(callback) {
+  this._request.get({
+    uri: communityURL + '/my/edit/settings'
+  }, function(err, response, body) {
+    if (err || response.statusCode !== 200) {
+      this.emit('debug', 'retrieving privacy settings: ' + (err || response.statusCode));
+      return callback(err || new Error(response.statusCode));
+    }
+    if (!body) {
+      this.emit('debug', 'retrieving privacy settings: invalid response');
+      return callback(new Error('Invalid Response'));
+    }
+
+    var $ = cheerio.load(body);
+    var privacySettings = {};
+
+    var radioInputs = $('input[type=\'radio\']:checked');
+    for (var i = 0; i < radioInputs.length; i++) {
+      var attrs = $(radioInputs[i]).attr('id').split('_');
+      if (attrs.length < 2) continue;
+
+      privacySettings[attrs[0]] = attrs[1];
+    }
+
+    var checkboxInputs = $('input[type=\'checkbox\']');
+    for (var i = 0; i < checkboxInputs.length; i++) {
+      privacySettings[$(checkboxInputs[i]).attr('id')] = $(checkboxInputs[i]).is(':checked');
+    }
+
+    callback(null, privacySettings);
+  }.bind(this));
+};
+
 SteamTradeOffers.prototype.loadMyInventory = function(options, callback) {
   var query = {};
 
