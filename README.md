@@ -165,7 +165,7 @@ Options:
 
 The second argument to `callback` will be an object like:
 
-```json
+```js
 { my: 0, their: 0 }
 ```
 
