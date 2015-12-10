@@ -142,6 +142,10 @@ Options:
 
 The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
 
+## getTradeLink(callback)
+
+The second argument to `callback` will be the trade offer URL.
+
 ## getOfferToken(callback)
 
 The second argument to `callback` will be the offer token of the bot, extracted from its trade offer URL.
