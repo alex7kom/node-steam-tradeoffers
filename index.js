@@ -46,7 +46,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
     }
 
     var $ = cheerio.load(body);
-    var offerUrl = $('input#trade_offer_access_url').val();
+    var offerUrl = $('input#trade_offer_access_url').attr("value");
     var offerToken = url.parse(offerUrl, true).query.token;
 
     callback(null, offerToken);
