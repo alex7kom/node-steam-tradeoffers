@@ -156,18 +156,31 @@ The second argument to `callback` will be an array of items acquired in a comple
 
 ## getHoldDuration(options, callback)
 
-Get escrow hold duration for yourself and your trade partner.
+Get escrow hold duration for yourself and your trade partner before trade.
 
 Options:
 
 * `partnerAccountId` or `partnerSteamId`, you need only one of those.
-* `accessToken` (optional) is a token from the public Trade URL of the partner.
+* `accessToken` is a token from the public Trade URL of the partner (required if they are not in your friend list).
 
 The second argument to `callback` will be an object like:
 
 ```json
-{ my: 0, their: 0 }
+{
+    "my": 0,
+    "their": 0
+}
 ```
+
+## getTradeHoldDuration(options, callback)
+
+Get escrow hold duration for the existing trade offer.
+
+Options:
+
+* `tradeOfferId` is a trade offer Id
+
+The output is the same as with `getHoldDuration`.
 
 # License
 
