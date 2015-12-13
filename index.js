@@ -498,9 +498,9 @@ function getHoldDuration (url, callback) {
         var error = $('#error_msg').text().trim();
       }
 
-      this.emit('debug', 'retrieving hold duration: can\'t get hold duration');
-
       var message = error || 'Can\'t get hold duration';
+
+      this.emit('debug', 'error retrieving hold duration: '+message);
       return callback(new Error(message));
     }
 
