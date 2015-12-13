@@ -494,8 +494,14 @@ function getHoldDuration (url, callback) {
     });
 
     if (!status) {
+      if($('#error_msg').length) {
+        var error = $('#error_msg').text().trim();
+      }
+
       this.emit('debug', 'retrieving hold duration: can\'t get hold duration');
-      return callback(new Error('Can\'t get hold duration'));
+
+      var message = error || 'Can\'t get hold duration';
+      return callback(new Error(message));
     }
 
     var sandbox = {
@@ -503,7 +509,7 @@ function getHoldDuration (url, callback) {
     };
 
     // prepare to execute the script in new context
-    var code = scriptToExec + 
+    var code = scriptToExec +
       'data.my = g_daysMyEscrow;' +
       'data.their = g_daysTheirEscrow;';
 
