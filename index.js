@@ -494,8 +494,16 @@ function getHoldDuration (url, callback) {
     });
 
     if (!status) {
-      this.emit('debug', 'retrieving hold duration: can\'t get hold duration');
-      return callback(new Error('Can\'t get hold duration'));
+      var errorMsg;
+
+      if ($('#error_msg').length > 0) {
+        errorMsg = $('#error_msg').text().trim();
+      }
+
+      var message = errorMsg || 'Can\'t get hold duration';
+
+      this.emit('debug', 'error retrieving hold duration: ' + message);
+      return callback(new Error(message));
     }
 
     var sandbox = {
