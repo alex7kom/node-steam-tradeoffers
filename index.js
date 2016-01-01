@@ -17,7 +17,8 @@ function SteamTradeOffers() {
 
 SteamTradeOffers.prototype.setup = function(options) {
   this._j = request.jar();
-  this._request = request.defaults({ jar: this._j });
+  this._requestCommunity = request.defaults({ jar: this._j });
+  this._requestAPI = request.defaults();
 
   this.APIKey = options.APIKey;
 
@@ -40,7 +41,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
 };
 
 SteamTradeOffers.prototype.getOfferUrl = function(callback) {
-  this._request.get({
+  this._requestCommunity.get({
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
@@ -206,7 +207,7 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
-  this._request.post({
+  this._requestCommunity.post({
     uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
       referer: communityURL + '/tradeoffer/' + options.tradeOfferId + '/'
@@ -281,7 +282,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     referer = communityURL + '/tradeoffer/new/?' + querystring.stringify(query);
   }
 
-  this._request.post({
+  this._requestCommunity.post({
     uri: communityURL + '/tradeoffer/new/send',
     headers: {
       referer: referer
@@ -320,7 +321,7 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
 SteamTradeOffers.prototype.getItems = function(options, callback) {
   // Derived from node-steam-trade
   // https://github.com/seishun/node-steam-trade/blob/master/index.js#L86-L119
-  this._request.get({
+  this._requestCommunity.get({
     uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
     if (err || response.statusCode !== 200) {
@@ -408,7 +409,7 @@ function loadInventory(options, callback) {
     requestParams.headers = options.headers;
   }
 
-  this._request.get(requestParams, function(error, response, body) {
+  this._requestCommunity.get(requestParams, function(error, response, body) {
     if (error) {
       this.emit('debug', 'loading inventory: ' + error);
       return callback(error);
@@ -451,7 +452,7 @@ function doAPICall(options) {
     params.form = options.params;
   }
 
-  request[httpMethod](params, function(error, response, body) {
+  this._requestAPI[httpMethod](params, function(error, response, body) {
     if (error || response.statusCode !== 200) {
       this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
       if (typeof options.callback === 'function') {
@@ -473,7 +474,7 @@ function doAPICall(options) {
 }
 
 function getHoldDuration (url, callback) {
-  this._request.get({
+  this._requestCommunity.get({
     uri: url
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
