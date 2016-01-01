@@ -8,11 +8,12 @@ var vm = require('vm');
 var querystring = require('querystring');
 
 var communityURL = 'https://steamcommunity.com';
+var defaultTimeout = 30000;
 
 function SteamTradeOffers() {}
 
 SteamTradeOffers.prototype.setup = function(options) {
-  var timeout = options.timeout || 10000;
+  var timeout = options.timeout || defaultTimeout;
 
   this._j = request.jar();
   this._requestCommunity = request.defaults({
