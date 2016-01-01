@@ -9,11 +9,7 @@ var querystring = require('querystring');
 
 var communityURL = 'https://steamcommunity.com';
 
-require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
-
-function SteamTradeOffers() {
-  require('events').EventEmitter.call(this);
-}
+function SteamTradeOffers() {}
 
 SteamTradeOffers.prototype.setup = function(options) {
   var timeout = options.timeout || 10000;
@@ -53,11 +49,9 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      this.emit('debug', 'retrieving offer token: ' + (error || response.statusCode));
       return callback(error || new Error(response.statusCode));
     }
     if (!body) {
-      this.emit('debug', 'retrieving offer token: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
@@ -228,21 +222,18 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     }
   }, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'accepting offer: ' + error);
       if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
-      this.emit('debug', 'accepting offer: ' + body.strError);
       if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'accepting offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
@@ -299,21 +290,18 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     form: formFields
   }, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'making an offer: ' + error);
       if (typeof callback === 'function') {
         callback(error);
       }
       return;
     }
     if (body && body.strError) {
-      this.emit('debug', 'making an offer: ' + body.strError);
       if (typeof callback === 'function') {
         callback(new Error(body.strError));
       }
       return;
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'making an offer: ' + response.statusCode);
       if (typeof callback === 'function') {
         callback(new Error(response.statusCode));
       }
@@ -333,13 +321,11 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
     uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
     if (err || response.statusCode !== 200) {
-      this.emit('debug', 'get items: ' + (err || response.statusCode));
       return callback(err || new Error(response.statusCode));
     }
 
     var script = body.match(/(var oItem;[\s\S]*)<\/script>/);
     if (!script) {
-      this.emit('debug', 'get items: no session');
       return callback(new Error('No session'));
     }
 
@@ -419,19 +405,15 @@ function loadInventory(options, callback) {
 
   this._requestCommunity.get(requestParams, function(error, response, body) {
     if (error) {
-      this.emit('debug', 'loading inventory: ' + error);
       return callback(error);
     }
     if (body && body.error) {
-      this.emit('debug', 'loading inventory: error: ' + body.error);
       return callback(new Error(body.error));
     }
     if (response.statusCode !== 200) {
-      this.emit('debug', 'loading inventory: ' + response.statusCode);
       return callback(new Error(response.statusCode));
     }
     if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
-      this.emit('debug', 'loading inventory: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
@@ -462,14 +444,12 @@ function doAPICall(options) {
 
   this._requestAPI[httpMethod](params, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      this.emit('debug', 'doing API call ' + options.method + ': ' + (error || response.statusCode));
       if (typeof options.callback === 'function') {
         options.callback(error || new Error(response.statusCode));
       }
       return;
     }
     if (!body || typeof body !== 'object') {
-      this.emit('debug', 'doing API call ' + options.method + ': invalid response');
       if (typeof options.callback === 'function') {
         options.callback(new Error('Invalid Response'));
       }
@@ -486,11 +466,9 @@ function getHoldDuration (url, callback) {
     uri: url
   }, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      this.emit('debug', 'retrieving hold duration: ' + (error || response.statusCode));
       return callback(error || new Error(response.statusCode));
     }
     if (!body) {
-      this.emit('debug', 'retrieving hold duration: invalid response');
       return callback(new Error('Invalid Response'));
     }
 
@@ -517,7 +495,6 @@ function getHoldDuration (url, callback) {
 
       var message = errorMsg || 'Can\'t get hold duration';
 
-      this.emit('debug', 'error retrieving hold duration: ' + message);
       return callback(new Error(message));
     }
 
