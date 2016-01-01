@@ -57,11 +57,11 @@ Please read the [FAQ](https://github.com/Alex7Kom/node-steam-tradeoffers/wiki/FA
 
 # Methods
 
-The first param for all methods is an object. The second param is callback. All callbacks supplied with `Error` as the first argument or `null` if no errors occured.
+`options` param of all methods is just an object. All callbacks supplied with `Error` as the first argument or `null` if no errors occured.
 
-## setup(options[, callback])
+## setup(options)
 
-As noted above, this method is used to setup a web session. If you want to operate with trade offers right after startup, do it in callback of this method.
+As noted above, this method is used to setup a web session. If you want to operate with trade offers right after startup, do it after calling this method.
 
 Options:
 

@@ -90,9 +90,8 @@ steamClient.on('logOnResponse', function(logonResp) {
           sessionID: sessionID,
           webCookie: newCookie,
           APIKey: APIKey
-        }, function() {
-          offerItems();
         });
+        offerItems();
       });
     });
   }

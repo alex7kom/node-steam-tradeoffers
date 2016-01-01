@@ -18,7 +18,7 @@ function SteamTradeOffers() {
   this._request = request.defaults({ jar: this._j });
 }
 
-SteamTradeOffers.prototype.setup = function(options, callback) {
+SteamTradeOffers.prototype.setup = function(options) {
   this.APIKey = options.APIKey;
 
   this.sessionID = options.sessionID;
@@ -26,10 +26,6 @@ SteamTradeOffers.prototype.setup = function(options, callback) {
   options.webCookie.forEach(function(name) {
     setCookie.bind(this)(name);
   }.bind(this));
-
-  if (typeof callback === 'function') {
-    callback();
-  }
 };
 
 SteamTradeOffers.prototype.getOfferToken = function(callback) {
