@@ -191,7 +191,7 @@ The output is the same as with `getHoldDuration`.
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2015 Alexey Komarov <alex7kom@gmail.com>
+Copyright (c) 2013-2016 Alexey Komarov <alex7kom@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
