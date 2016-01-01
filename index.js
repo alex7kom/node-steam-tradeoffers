@@ -59,6 +59,10 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
     var $ = cheerio.load(body);
     var offerUrl = $('input#trade_offer_access_url').val();
 
+    if (!offerUrl) {
+      return callback(new Error('Invalid Response'));
+    }
+
     callback(null, offerUrl);
   }.bind(this));
 };
