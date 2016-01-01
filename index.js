@@ -13,12 +13,12 @@ require('util').inherits(SteamTradeOffers, require('events').EventEmitter);
 
 function SteamTradeOffers() {
   require('events').EventEmitter.call(this);
-
-  this._j = request.jar();
-  this._request = request.defaults({ jar: this._j });
 }
 
 SteamTradeOffers.prototype.setup = function(options) {
+  this._j = request.jar();
+  this._request = request.defaults({ jar: this._j });
+
   this.APIKey = options.APIKey;
 
   this.sessionID = options.sessionID;
