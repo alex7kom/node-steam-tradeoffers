@@ -16,9 +16,17 @@ function SteamTradeOffers() {
 }
 
 SteamTradeOffers.prototype.setup = function(options) {
+  var timeout = options.timeout || 10000;
+
   this._j = request.jar();
-  this._requestCommunity = request.defaults({ jar: this._j });
-  this._requestAPI = request.defaults();
+  this._requestCommunity = request.defaults({
+    jar: this._j,
+    timeout: timeout
+  });
+
+  this._requestAPI = request.defaults({
+    timeout: timeout
+  });
 
   this.APIKey = options.APIKey;
 
