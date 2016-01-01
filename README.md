@@ -179,7 +179,7 @@ The second argument to `callback` will be an object like:
 
 ## getTradeHoldDuration(options, callback)
 
-Get escrow hold duration for the existing trade offer.
+Get escrow hold duration for the existing active trade offer.
 
 Options:
 
