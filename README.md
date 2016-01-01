@@ -72,7 +72,7 @@ Options:
 
 ## loadMyInventory(options, callback)
 
-Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. The second argument to `callback` will be an array of item objects in case of success.
+Loads your inventory for the given app and context. For example, use 440 and 2 for TF2 and 570 and 2 for Dota 2. If success the second argument to `callback` will be an array of item objects and the third argument will contain raw inventory objects, not merged with descriptions but still concatenated from multiple inventory pages.
 
 Options:
 

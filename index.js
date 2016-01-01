@@ -363,6 +363,19 @@ function toAccountId(steamId) {
   return Long.fromString(steamId).toInt().toString();
 }
 
+function mergeRawInventory (raw, rawBody) {
+  var body = JSON.parse(JSON.stringify(rawBody));
+  var rgInventory = raw.rgInventory || {};
+  var rgCurrency = raw.rgCurrency || {};
+  var rgDescriptions = raw.rgDescriptions || {};
+
+  return {
+    rgInventory: mergeObjects(rgInventory, body.rgInventory),
+    rgCurrency: mergeObjects(rgCurrency, body.rgCurrency),
+    rgDescriptions: mergeObjects(rgDescriptions, body.rgDescriptions)
+  };
+}
+
 function mergeInventory(inventory, body, contextId) {
   return inventory.concat(
     mergeWithDescriptions(body.rgInventory, body.rgDescriptions, contextId)
@@ -387,8 +400,21 @@ function mergeWithDescriptions(items, descriptions, contextid) {
   });
 }
 
+function mergeObjects() {
+  var result = {};
+  for (var i = 0; i < arguments.length; i++) {
+    for (var index in arguments[i]) {
+      if (arguments[i].hasOwnProperty(index)) {
+        result[index] = arguments[i][index];
+      }
+    }
+  }
+  return result;
+}
+
 function loadInventory(options, callback) {
   options.inventory = options.inventory || [];
+  options.raw = options.raw || {};
 
   var requestParams = {
     uri: options.uri,
@@ -417,13 +443,14 @@ function loadInventory(options, callback) {
       return callback(new Error('Invalid Response'));
     }
 
+    options.raw = mergeRawInventory(options.raw, body);
     options.inventory = mergeInventory(options.inventory, body, options.contextId);
 
     if (body.more) {
       options.start = body.more_start;
       loadInventory.bind(this)(options, callback);
     } else {
-      callback(null, options.inventory);
+      callback(null, options.inventory, options.raw);
     }
   }.bind(this));
 }
