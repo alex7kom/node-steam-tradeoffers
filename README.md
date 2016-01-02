@@ -65,10 +65,12 @@ As noted above, this method is used to setup a web session. If you want to opera
 
 Options:
 
-* `sessionID` is a valid web session ID. In node-steam, you can use the `webSessionID` event to get it.
-* `webCookie` is an array of cookies. In node-steam, you can use the `webLogOn` method to get it.
+* `sessionID` is a valid web session ID.
+* `webCookie` is an array of cookies.
 * `APIKey` is a Web API key for the account you use to trade. API key of another account won't work.
 * `timeout` (optional) is a number of milliseconds to wait for Steam servers to respond. Default is `30000`. More information about timeouts can be found in [request docs](https://github.com/request/request#timeouts).
+
+`sessionID` and `webCookie` can be acquired using [node-steam](https://github.com/seishun/node-steam) with the [node-steam-weblogon plugin](https://github.com/Alex7Kom/node-steam-weblogon). `APIKey` can be obtained using [node-steam-web-api-key](https://github.com/Alex7Kom/node-steam-web-api-key).
 
 ## loadMyInventory(options, callback)
 
