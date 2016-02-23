@@ -507,10 +507,8 @@ function getHoldDuration (url, callback) {
     var $ = cheerio.load(body);
     var scriptToExec = '';
     var status = $('script').get().some(function (script) {
-      if (!script.children[0]) {
-        return false;
-      }
-      var text = script.children[0].data;
+      
+      var text = $(script).text();
       if (/var g_daysMyEscrow/.test(text)) {
         scriptToExec = text;
         return true;
