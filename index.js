@@ -523,7 +523,9 @@ function getHoldDuration (url, callback) {
 
       if ($('#error_msg').length > 0) {
         errorMsg = $('#error_msg').text().trim();
-      }
+      }else if ($('.mainLoginPanel').length > 0){
+		    errorMsg = "Weblogon Session expired";
+	    }
 
       var message = errorMsg || 'Can\'t get hold duration';
 
