@@ -441,11 +441,11 @@ function loadInventory(options, callback) {
     if (body && body.error) {
       return callback(new Error(body.error));
     }
+    if (!response || !body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
+      return callback(new Error('Invalid Response'));
+    }
     if (response.statusCode !== 200) {
       return callback(new Error(response.statusCode));
-    }
-    if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
-      return callback(new Error('Invalid Response'));
     }
 
     options.raw = mergeRawInventory(options.raw, body);
