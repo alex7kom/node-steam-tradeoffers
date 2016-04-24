@@ -49,7 +49,7 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
   this._requestCommunity.get({
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
+    if (error || (response && response.statusCode !== 200)) {
       return callback(error || new Error(response.statusCode));
     }
     if (!body) {
@@ -238,8 +238,11 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     if (body && body.strError) {
       return cb(new Error(body.strError));
     }
-    if (response.statusCode !== 200) {
+    if (response && response.statusCode !== 200) {
       return cb(new Error(response.statusCode));
+    }
+    if (!body) {
+      return cb(new Error('Invalid Response'));
     }
 
     cb(null, body);
@@ -301,8 +304,11 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     if (body && body.strError) {
       return cb(new Error(body.strError));
     }
-    if (response.statusCode !== 200) {
+    if (response && response.statusCode !== 200) {
       return cb(new Error(response.statusCode));
+    }
+    if (!body) {
+      return cb(new Error('Invalid Response'));
     }
 
     cb(null, body);
@@ -315,8 +321,11 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
   this._requestCommunity.get({
     uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
-    if (err || response.statusCode !== 200) {
+    if (err || (response && response.statusCode !== 200)) {
       return callback(err || new Error(response.statusCode));
+    }
+    if (!body) {
+      return callback(new Error('Invalid Response'));
     }
 
     var script = body.match(/(var oItem;[\s\S]*)<\/script>/);
@@ -431,7 +440,7 @@ function loadInventory(options, callback) {
     if (body && body.error) {
       return callback(new Error(body.error));
     }
-    if (response.statusCode !== 200) {
+    if (response && response.statusCode !== 200) {
       return callback(new Error(response.statusCode));
     }
     if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
@@ -471,7 +480,7 @@ function doAPICall(options) {
   }
 
   this._requestAPI[httpMethod](params, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
+    if (error || (response && response.statusCode !== 200)) {
       return cb(error || new Error(response.statusCode));
     }
     if (!body || typeof body !== 'object') {
@@ -485,7 +494,7 @@ function getHoldDuration (url, callback) {
   this._requestCommunity.get({
     uri: url
   }, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
+    if (error || (response && response.statusCode !== 200)) {
       return callback(error || new Error(response.statusCode));
     }
     if (!body) {
