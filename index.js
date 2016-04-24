@@ -49,11 +49,11 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
   this._requestCommunity.get({
     uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
+    if (!response || !body) {
+      return callback(new Error('Invalid Response'));
+    }
     if (error || response.statusCode !== 200) {
       return callback(error || new Error(response.statusCode));
-    }
-    if (!body) {
-      return callback(new Error('Invalid Response'));
     }
 
     var $ = cheerio.load(body);
@@ -226,6 +226,12 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
       tradeofferid: options.tradeOfferId
     }
   }, function(error, response, body) {
+    if (!response || !body) {
+      if (typeof callback === 'function') {
+        callback(new Error('Invalid Response'));
+      }
+      return;
+    }
     if (error) {
       if (typeof callback === 'function') {
         callback(error);
@@ -294,6 +300,12 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     json: true,
     form: formFields
   }, function(error, response, body) {
+    if (!response || !body) {
+      if (typeof callback === 'function') {
+        callback(new Error('Invalid Response'));
+      }
+      return;
+    }
     if (error) {
       if (typeof callback === 'function') {
         callback(error);
@@ -325,6 +337,9 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
   this._requestCommunity.get({
     uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
   }, function(err, response, body) {
+    if (!response || !body || !response) {
+      return callback(new Error('Invalid Response'));
+    }
     if (err || response.statusCode !== 200) {
       return callback(err || new Error(response.statusCode));
     }
@@ -441,11 +456,11 @@ function loadInventory(options, callback) {
     if (body && body.error) {
       return callback(new Error(body.error));
     }
+    if (!response || !body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
+      return callback(new Error('Invalid Response'));
+    }
     if (response.statusCode !== 200) {
       return callback(new Error(response.statusCode));
-    }
-    if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
-      return callback(new Error('Invalid Response'));
     }
 
     options.raw = mergeRawInventory(options.raw, body);
@@ -475,15 +490,15 @@ function doAPICall(options) {
   }
 
   this._requestAPI[httpMethod](params, function(error, response, body) {
-    if (error || response.statusCode !== 200) {
-      if (typeof options.callback === 'function') {
-        options.callback(error || new Error(response.statusCode));
+    if (!response || !body || typeof body !== 'object') {
+      if (typeof callback === 'function') {
+        options.callback(new Error('Invalid Response'));
       }
       return;
     }
-    if (!body || typeof body !== 'object') {
+    if (error || response.statusCode !== 200) {
       if (typeof options.callback === 'function') {
-        options.callback(new Error('Invalid Response'));
+        options.callback(error || new Error(response.statusCode));
       }
       return;
     }
@@ -497,11 +512,11 @@ function getHoldDuration (url, callback) {
   this._requestCommunity.get({
     uri: url
   }, function(error, response, body) {
+    if (!response || !body) {
+      return callback(new Error('Invalid Response'));
+    }
     if (error || response.statusCode !== 200) {
       return callback(error || new Error(response.statusCode));
-    }
-    if (!body) {
-      return callback(new Error('Invalid Response'));
     }
 
     var $ = cheerio.load(body);
