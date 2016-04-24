@@ -214,6 +214,12 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
 };
 
 SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
+  var cb = function () {
+    if (typeof callback === 'function') {
+      callback.apply(null, arguments);
+    }
+  };
+
   this._requestCommunity.post({
     uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
@@ -227,31 +233,26 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     }
   }, function(error, response, body) {
     if (error) {
-      if (typeof callback === 'function') {
-        callback(error);
-      }
-      return;
+      return cb(error);
     }
     if (body && body.strError) {
-      if (typeof callback === 'function') {
-        callback(new Error(body.strError));
-      }
-      return;
+      return cb(new Error(body.strError));
     }
     if (response.statusCode !== 200) {
-      if (typeof callback === 'function') {
-        callback(new Error(response.statusCode));
-      }
-      return;
+      return cb(new Error(response.statusCode));
     }
 
-    if (typeof callback === 'function') {
-      callback(null, body);
-    }
+    cb(null, body);
   }.bind(this));
 };
 
 SteamTradeOffers.prototype.makeOffer = function(options, callback) {
+  var cb = function () {
+    if (typeof callback === 'function') {
+      callback.apply(null, arguments);
+    }
+  };
+
   var tradeoffer = {
     newversion: true,
     version: 2,
@@ -295,27 +296,16 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
     form: formFields
   }, function(error, response, body) {
     if (error) {
-      if (typeof callback === 'function') {
-        callback(error);
-      }
-      return;
+      return cb(error);
     }
     if (body && body.strError) {
-      if (typeof callback === 'function') {
-        callback(new Error(body.strError));
-      }
-      return;
+      return cb(new Error(body.strError));
     }
     if (response.statusCode !== 200) {
-      if (typeof callback === 'function') {
-        callback(new Error(response.statusCode));
-      }
-      return;
+      return cb(new Error(response.statusCode));
     }
 
-    if (typeof callback === 'function') {
-      callback(null, body);
-    }
+    cb(null, body);
   }.bind(this));
 };
 
@@ -461,6 +451,12 @@ function loadInventory(options, callback) {
 }
 
 function doAPICall(options) {
+  var cb = function () {
+    if (typeof options.callback === 'function') {
+      options.callback.apply(null, arguments);
+    }
+  };
+
   var httpMethod = options.post ? 'post' : 'get';
 
   var params = {
@@ -476,20 +472,12 @@ function doAPICall(options) {
 
   this._requestAPI[httpMethod](params, function(error, response, body) {
     if (error || response.statusCode !== 200) {
-      if (typeof options.callback === 'function') {
-        options.callback(error || new Error(response.statusCode));
-      }
-      return;
+      return cb(error || new Error(response.statusCode));
     }
     if (!body || typeof body !== 'object') {
-      if (typeof options.callback === 'function') {
-        options.callback(new Error('Invalid Response'));
-      }
-      return;
+      return cb(new Error('Invalid Response'));
     }
-    if (typeof options.callback === 'function') {
-      options.callback(null, body);
-    }
+    cb(null, body);
   }.bind(this));
 }
 
