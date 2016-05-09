@@ -16,14 +16,24 @@ SteamTradeOffers.prototype.setup = function(options) {
   var timeout = options.timeout || defaultTimeout;
 
   this._j = request.jar();
-  this._requestCommunity = request.defaults({
+  
+  var defaults1={
     jar: this._j,
     timeout: timeout
-  });
-
-  this._requestAPI = request.defaults({
+  };
+  
+  var defaults2={
     timeout: timeout
-  });
+  };
+  
+  if(options.localAddress){
+  	defaults1.localAddress=options.localAddress;
+  	defaults2.localAddress=options.localAddress;
+  }
+  
+  this._requestCommunity = request.defaults(defaults1);
+
+  this._requestAPI = request.defaults(defaults2);
 
   this.APIKey = options.APIKey;
 
