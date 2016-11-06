@@ -230,7 +230,8 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     form: {
       sessionid: this.sessionID,
       serverid: 1,
-      tradeofferid: options.tradeOfferId
+      tradeofferid: options.tradeOfferId,
+      partner: options.partnerSteamId
     }
   }, function(error, response, body) {
     if (error) {

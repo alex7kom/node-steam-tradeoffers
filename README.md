@@ -142,6 +142,7 @@ Options:
 Options:
 
 * `tradeOfferId` is a trade offer Id
+* `partnerSteamId` is the steamid64 of the other person
 
 The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
 
