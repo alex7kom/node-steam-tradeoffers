@@ -214,7 +214,7 @@ SteamTradeOffers.prototype.cancelOffer = function(options, callback) {
   });
 };
 
-SteamTradeOffers.prototype.acceptOffer = function(offer, callback) {
+SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
   var cb = function () {
     if (typeof callback === 'function') {
       callback.apply(null, arguments);
@@ -222,16 +222,16 @@ SteamTradeOffers.prototype.acceptOffer = function(offer, callback) {
   };
 
   this._requestCommunity.post({
-    uri: communityURL + '/tradeoffer/' + offer.tradeofferid + '/accept',
+    uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
-      referer: communityURL + '/tradeoffer/' + offer.tradeofferid + '/'
+      referer: communityURL + '/tradeoffer/' + options.tradeOfferId + '/'
     },
     json: true,
     form: {
       sessionid: this.sessionID,
       serverid: 1,
-      tradeofferid: offer.tradeofferid,
-      partner: offer.steamid_other
+      tradeofferid: options.tradeOfferId,
+      partner: options.partnerSteamId
     }
   }, function(error, response, body) {
     if (error) {
