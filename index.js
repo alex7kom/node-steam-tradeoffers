@@ -221,17 +221,23 @@ SteamTradeOffers.prototype.acceptOffer = function(options, callback) {
     }
   };
 
+  var formFields = {
+    sessionid: this.sessionID,
+    serverid: 1,
+    tradeofferid: options.tradeOfferId
+  };
+
+  if (options.partnerSteamId) {
+    formFields.partner = options.partnerSteamId;
+  }
+
   this._requestCommunity.post({
     uri: communityURL + '/tradeoffer/' + options.tradeOfferId + '/accept',
     headers: {
       referer: communityURL + '/tradeoffer/' + options.tradeOfferId + '/'
     },
     json: true,
-    form: {
-      sessionid: this.sessionID,
-      serverid: 1,
-      tradeofferid: options.tradeOfferId
-    }
+    form: formFields
   }, function(error, response, body) {
     if (error) {
       return cb(error);

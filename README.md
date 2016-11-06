@@ -133,11 +133,21 @@ Options:
 
  The second argument to `callback` will be an object that Steam Web API returns. The only thing to note is that the wrapper adds a property `steamid_other` with the SteamID of the trade partner to each `CEcon_TradeOffer` object in received trades.
 
-## declineOffer(options[, callback])
 ## acceptOffer(options[, callback])
+
+`acceptOffer` that was sent to you.
+
+Options:
+
+* `tradeOfferId` is a trade offer Id
+* `partnerSteamId` is the SteamID of the other person. This param is optional for backward compatibility. Accepting offers may not work for you without this param.
+
+The second argument to `callback` will be an object with response from Steam, but don't expect anything meaningful in it.
+
+## declineOffer(options[, callback])
 ## cancelOffer(options[, callback])
 
-`declineOffer` or `acceptOffer` that was sent to you. `cancelOffer` that you sent.
+`declineOffer` that was sent to you. `cancelOffer` that you sent.
 
 Options:
 
