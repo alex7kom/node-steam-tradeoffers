@@ -82,7 +82,7 @@ function handleOffers() {
       body.response.trade_offers_received.forEach(function(offer) {
         if (offer.trade_offer_state === 2) {
           if (offer.steamid_other === admin) {
-            offers.acceptOffer(offer);
+            offers.acceptOffer({tradeOfferId: offer.tradeofferid, partnerSteamId: offer.steamid_other});
           } else {
             offers.declineOffer({tradeOfferId: offer.tradeofferid});
           }
