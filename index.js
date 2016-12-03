@@ -20,12 +20,12 @@ SteamTradeOffers.prototype.setup = function(options) {
   this._requestCommunity = request.defaults({
     jar: this._j,
     timeout: timeout,
-	proxy: proxy
+    proxy: proxy
   });
 
   this._requestAPI = request.defaults({
     timeout: timeout,
-	proxy: proxy
+    proxy: proxy
   });
 
   this.APIKey = options.APIKey;
