@@ -453,8 +453,11 @@ function loadInventory(options, callback) {
     if (response && response.statusCode !== 200) {
       return callback(new Error(response.statusCode));
     }
-    if (!body || !body.rgInventory || !body.rgDescriptions || !body.rgCurrency) {
+
+    if (!body) {
       return callback(new Error('Invalid Response'));
+    } else if (!body.rgInventory || !body.rgDescriptions || !body.rgCurrency) { // Inventory is empty
+      return callback();
     }
 
     options.raw = mergeRawInventory(options.raw, body);
@@ -542,7 +545,7 @@ function getHoldDuration (url, callback) {
     };
 
     // prepare to execute the script in new context
-    var code = scriptToExec + 
+    var code = scriptToExec +
       'data.my = g_daysMyEscrow;' +
       'data.their = g_daysTheirEscrow;';
 
