@@ -70,7 +70,7 @@ Options:
 * `APIKey` is a Web API key for the account you use to trade. API key of another account won't work.
 * `requestOptions` (optional) is a request `options` object. You can use it to configure timeout, proxy, etc. All available options are listed in [request docs](https://github.com/request/request#requestoptions-callback). This library uses some defaults:
   * `timeout` is a number of milliseconds to wait for Steam servers to respond. Default is `30000`.
-* `timeout` (optional) is a number of milliseconds to wait for Steam servers to respond. Default is `30000`. More information about timeouts can be found in [request docs](https://github.com/request/request#timeouts).
+* **DEPRECATED** `timeout` (optional) is a number of milliseconds to wait for Steam servers to respond. Default is `30000`. More information about timeouts can be found in [request docs](https://github.com/request/request#timeouts).
 
 `sessionID` and `webCookie` can be acquired using [node-steam](https://github.com/seishun/node-steam) with the [node-steam-weblogon plugin](https://github.com/Alex7Kom/node-steam-weblogon). `APIKey` can be obtained using [node-steam-web-api-key](https://github.com/Alex7Kom/node-steam-web-api-key).
 
