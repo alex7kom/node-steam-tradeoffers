@@ -13,17 +13,20 @@ var defaultTimeout = 30000;
 function SteamTradeOffers() {}
 
 SteamTradeOffers.prototype.setup = function(options) {
-  var timeout = options.timeout || defaultTimeout;
+  var requestWrapper = request.defaults({
+    timeout: options.timeout || defaultTimeout
+  });
+
+  if (options.requestOptions) {
+    requestWrapper = requestWrapper.defaults(options.requestOptions);
+  }
 
   this._j = request.jar();
-  this._requestCommunity = request.defaults({
-    jar: this._j,
-    timeout: timeout
+  this._requestCommunity = requestWrapper.defaults({
+    jar: this._j
   });
 
-  this._requestAPI = request.defaults({
-    timeout: timeout
-  });
+  this._requestAPI = requestWrapper;
 
   this.APIKey = options.APIKey;
 
