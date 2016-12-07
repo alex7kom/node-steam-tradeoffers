@@ -338,6 +338,13 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
       return callback(new Error('Invalid Response'));
     }
 
+    var $ = cheerio.load(body);
+    var header = $('.received_items_header h1')[1];
+    var itemsCount = parseInt($(header).text().trim().split(' '));
+    if (isNaN(itemsCount)) {
+      return callback(null, []);
+    }
+
     var script = body.match(/(var oItem;[\s\S]*)<\/script>/);
     if (!script) {
       return callback(new Error('No session'));
@@ -360,6 +367,11 @@ SteamTradeOffers.prototype.getItems = function(options, callback) {
       script[1];
 
     vm.runInNewContext(code, sandbox);
+
+    // Sometimes oItem is empty even if there are acquired items
+    if (sandbox.items.length !== itemsCount) {
+      return callback(new Error('Invalid Response'));
+    }
 
     callback(null, sandbox.items);
   });
