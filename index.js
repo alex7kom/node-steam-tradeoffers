@@ -442,6 +442,10 @@ function loadInventory(options, callback) {
   if (options.headers) {
     requestParams.headers = options.headers;
   }
+  
+  if(options.localAddress) {
+    requestParams.localAddress = options.localAddress;
+  }
 
   this._requestCommunity.get(requestParams, function(error, response, body) {
     if (error) {
