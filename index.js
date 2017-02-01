@@ -67,7 +67,7 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
       return callback(new Error('Invalid Response'));
     }
 
-    callback(null, offerUrl);
+    callback(offerUrl);
   }.bind(this));
 };
 
