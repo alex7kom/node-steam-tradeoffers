@@ -71,6 +71,25 @@ SteamTradeOffers.prototype.getOfferUrl = function(callback) {
   }.bind(this));
 };
 
+SteamTradeOffers.prototype.validateOfferUrl = function(offerUrl, callback) {
+  this._requestCommunity.get({
+    uri: offerUrl
+  }, function(error, response, body) {
+    if (error || (response && response.statusCode !== 200)) {
+      return callback(error || new Error(response.statusCode));
+    }
+    if (!body) {
+      return callback(new Error('Invalid Response'));
+    }
+
+    if (body.indexOf("trade_partner_info_block") == -1) {
+      return callback(new Error('Invalid Response'));
+    }
+
+    callback(null, true);
+  }.bind(this));
+};
+
 SteamTradeOffers.prototype.getTradeHoldDuration = function(options, callback) {
   var url = communityURL + '/tradeoffer/' + options.tradeOfferId + '/';
 
