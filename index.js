@@ -81,9 +81,8 @@ SteamTradeOffers.prototype.validateOfferUrl = function(offerUrl, callback) {
     if (!body) {
       return callback(new Error('Invalid Response'));
     }
-
-    if (body.indexOf("trade_partner_info_block") == -1) {
-      return callback(new Error('Invalid Response'));
+    if (body.indexOf('trade_partner_info_block') === -1) {
+      return callback(null, false);
     }
 
     callback(null, true);
