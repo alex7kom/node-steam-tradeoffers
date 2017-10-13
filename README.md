@@ -165,6 +165,10 @@ The second argument to `callback` will be the trade offer URL.
 
 The second argument to `callback` will be the offer token of the bot, extracted from its trade offer URL.
 
+## validateOfferUrl(offerUrl, callback)
+
+The second argument to `callback` will be a boolean.
+
 ## getItems(options, callback)
 
 Options:
