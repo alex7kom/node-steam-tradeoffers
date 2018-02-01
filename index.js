@@ -501,6 +501,8 @@ function doAPICall(options) {
 }
 
 function getHoldDuration (url, callback) {
+  'use strict';
+  
   this._requestCommunity.get({
     uri: url
   }, function(error, response, body) {
@@ -536,18 +538,16 @@ function getHoldDuration (url, callback) {
 
       return callback(new Error(message));
     }
-
-    var sandbox = {
-      data: {}
-    };
-
-    // prepare to execute the script in new context
-    var code = scriptToExec + 
-      'data.my = g_daysMyEscrow;' +
-      'data.their = g_daysTheirEscrow;';
-
-    vm.runInNewContext(code, sandbox);
-
-    callback(null, sandbox.data);
+    
+    let evalCode = scriptToExec.split(/\r?\n/)
+    .filter(function(line) {
+        return line.indexOf('//') === -1 && line.indexOf('var') > -1;
+    })
+    .join('');
+    evalCode = evalCode.trim()
+    .replace(new RegExp('/\r|\n|\t/g'), '');
+    evalCode = '(function() {' + evalCode + ' return {g_daysTheirEscrow: g_daysTheirEscrow, g_daysMyEscrow: g_daysMyEscrow, g_daysBothEscrow: g_daysBothEscrow};})()';
+  
+    callback(null, eval(evalCode));
   }.bind(this));
 }
