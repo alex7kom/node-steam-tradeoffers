@@ -546,7 +546,7 @@ function getHoldDuration (url, callback) {
     .join('');
     evalCode = evalCode.trim()
     .replace(new RegExp('/\r|\n|\t/g'), '');
-    evalCode = '(function() {' + evalCode + ' return {g_daysTheirEscrow: g_daysTheirEscrow, g_daysMyEscrow: g_daysMyEscrow, g_daysBothEscrow: g_daysBothEscrow};})()';
+    evalCode = '(function() {' + evalCode + ' return {their: g_daysTheirEscrow, my: g_daysMyEscrow, both: g_daysBothEscrow};})()';
   
     callback(null, eval(evalCode));
   }.bind(this));
