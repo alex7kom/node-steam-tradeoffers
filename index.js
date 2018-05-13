@@ -50,8 +50,7 @@ SteamTradeOffers.prototype.getOfferToken = function(callback) {
 
 SteamTradeOffers.prototype.getOfferUrl = function(callback) {
   this._requestCommunity.get({
-    // http because Steam CDN is broken
-    uri: 'http://steamcommunity.com/my/tradeoffers/privacy'
+    uri: communityURL + '/my/tradeoffers/privacy'
   }, function(error, response, body) {
     if (error || (response && response.statusCode !== 200)) {
       return callback(error || new Error(response.statusCode));
