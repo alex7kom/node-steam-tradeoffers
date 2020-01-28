@@ -170,6 +170,7 @@ The second argument to `callback` will be the offer token of the bot, extracted 
 Options:
 
 * `tradeId` is the ID of the completed trade you want to get items for, available as a `tradeid` property on offers from `getOffers` or `getOffer`
+* `language` (optional) is the language for item descriptions
 
 The second argument to `callback` will be an array of items acquired in a completed trade.
 

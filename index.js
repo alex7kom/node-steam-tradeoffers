@@ -327,8 +327,14 @@ SteamTradeOffers.prototype.makeOffer = function(options, callback) {
 SteamTradeOffers.prototype.getItems = function(options, callback) {
   // Derived from node-steam-trade
   // https://github.com/seishun/node-steam-trade/blob/master/index.js#L86-L119
+  var query = '';
+
+  if (options.language) {
+    query = '?' + querystring.stringify({ l: options.language });
+  }
+
   this._requestCommunity.get({
-    uri: communityURL + '/trade/' + options.tradeId + '/receipt/'
+    uri: communityURL + '/trade/' + options.tradeId + '/receipt/' + query
   }, function(err, response, body) {
     if (err || (response && response.statusCode !== 200)) {
       return callback(err || new Error(response.statusCode));
