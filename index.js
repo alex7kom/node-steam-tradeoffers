@@ -547,7 +547,7 @@ function getHoldDuration (url, callback) {
     };
 
     // prepare to execute the script in new context
-    var code = scriptToExec + 
+    var code = scriptToExec +
       'data.my = g_daysMyEscrow;' +
       'data.their = g_daysTheirEscrow;';
 
