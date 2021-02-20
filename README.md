@@ -83,6 +83,7 @@ Options:
 * `appId` is the Steam AppID
 * `contextId` is the inventory context Id
 * `language` (optional) is the language for item descriptions
+  * For a complete list of supported languages, refer to [this page](https://partner.steamgames.com/doc/store/localization#supported_languages).
 * `tradableOnly` (optional) is a boolean flag that defaults to `true` to return tradable items only
 
 ## loadPartnerInventory(options, callback)
